@@ -21,7 +21,7 @@ public abstract class MySqlConnnection {
             Class.forName("com.mysql.jdbc.Driver");
             //数据库连接参数。
             String serverName = "localhost"; 	// 数据库主机名称
-            String dbName = "empsal";   		// 数据库名称
+            String dbName = "pms";   		// 数据库名称
             String url = "jdbc:mysql://" + serverName + "/" + dbName;
             String username = "root";    		//MySql用户名
             String password = "";  				//MySql密码

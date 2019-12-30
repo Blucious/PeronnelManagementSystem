@@ -43,8 +43,8 @@ public class PwdUtil {
 
     // PwdUtil≤‚ ‘
     public static void main(String[] args) {
-        String a = hashPwd("123");
-        boolean r = BCrypt.checkpw("123", a);
+        String a = hashPwd("admin");
+        boolean r = BCrypt.checkpw("admin", a);
 
         assert r;
 

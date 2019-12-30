@@ -4,9 +4,13 @@
 
 package PMS;
 
+
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import PMS.security.PwdUtil;
+import PMS.db.DBAccount;
 
 /**
  * @author unknown
@@ -18,15 +22,24 @@ public class LoginFrame extends JFrame {
 
     private void buttonLoginMouseReleased(MouseEvent e) {
         String userName = textFieldUserName.getText();
-        String userPwd = new String(passwordFieldPassword.getPassword());
-        if (userName.equals("a") && userPwd.equals("12")) {
+        char[] userPassword = passwordFieldPassword.getPassword();
 
+        String hashedPassword = DBAccount.getHashedPassword(userName);
+        if (hashedPassword != null) {
+            if (PwdUtil.checkPwd(userPassword, hashedPassword)) {
+                JOptionPane.showMessageDialog(
+                        this, "µ«¬º≥…π¶");
+            } else {
+                JOptionPane.showMessageDialog(
+                        this, "µ«¬º ß∞‹£¨’ÀªßªÚ√‹¬Î¥ÌŒÛ");
+            }
         } else {
             JOptionPane.showMessageDialog(
-                    this, "µ«¬º ß∞‹£¨’ÀªßªÚ√‹¬Î¥ÌŒÛ");
+                    this, "≤È—Ø ß∞‹");
         }
 
     }
+
     private void thisWindowClosing(WindowEvent e) {
         this.dispose();
         // TODO add your code here
@@ -47,7 +60,7 @@ public class LoginFrame extends JFrame {
 
         //======== this ========
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        setTitle("\u767b\u5f55");
+        setTitle("\u4eba\u4e8b\u7ba1\u7406\u7cfb\u7edf");
         addWindowListener(new WindowAdapter() {
             @Override
             public void windowClosing(WindowEvent e) {
