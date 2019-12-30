@@ -2,31 +2,37 @@ package PMS.db;
 
 import PMS.bean.Account;
 
+import javax.swing.*;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class DBAccount {
+// 实现登录账户表操作
+public abstract class DBAccount {
 
     //私有空构造方法,保证本类不能够被实例化。
     private DBAccount() {
     }
 
-    // 密码查询
-    public static String getHashedPassword(String userName) {
+    // 查询记录
+    public static Account getAccount(String userName) {
         Connection conn = null;
-        String hashedPassword = null;
+        Account account = null;
 
         try {
             conn = MySqlConnnection.getConnection();
             PreparedStatement ps = conn.prepareStatement(
-                    "SELECT accHashedPassword FROM account WHERE accName=?");
+                    "SELECT * FROM account WHERE accName=?");
             ps.setString(1, userName);
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                hashedPassword = rs.getString(1);
+                account = new Account(
+                        rs.getString(1),
+                        rs.getString(2),
+                        true
+                );
             }
 
             ps.close();
@@ -37,6 +43,30 @@ public class DBAccount {
             MySqlConnnection.closeConnection(conn);
         }
 
-        return hashedPassword;
+        return account;
+    }
+
+    // 添加记录
+    public static boolean addAccount(Account account) {
+        Connection conn = null;
+        boolean state = false;
+
+        try {
+            conn = MySqlConnnection.getConnection();
+
+            PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO account VALUES (?,?)");
+            ps.setString(1, account.getName());
+            ps.setString(2, account.getHashedPassword());
+            ps.executeUpdate();
+            state = true;
+            ps.close();
+        } catch (SQLException e) {
+            JOptionPane.showMessageDialog(null, "账号已存在！");
+        } finally {
+            MySqlConnnection.closeConnection(conn);
+        }
+
+        return state;
     }
 }

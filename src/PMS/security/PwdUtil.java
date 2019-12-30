@@ -41,6 +41,105 @@ public class PwdUtil {
         return checkPwd(new String(plaintext), hashed);
     }
 
+
+    public static class EvaluationResult {
+        public int score;
+        public String description;
+
+        public EvaluationResult() {
+        }
+
+        public EvaluationResult(int score, String description) {
+            this.score = score;
+            this.description = description;
+        }
+
+        @Override
+        public String toString() {
+            return String.format("强度(%d) - %s", score, description);
+        }
+    }
+
+    // 评估密码
+    public static EvaluationResult evaluatePwd(char[] passwordPlaintext) {
+        // 参考：
+        // 说说密码强度规则 —— https://zhuanlan.zhihu.com/p/25545606
+
+        EvaluationResult er = new EvaluationResult();
+
+        // 密码长度
+        if (passwordPlaintext.length >= 8) {
+            er.score += 25;
+        } else if (passwordPlaintext.length >= 5) {
+            er.score += 10;
+        } else if (passwordPlaintext.length >= 1) {
+            er.score += 5;
+        }
+
+        int uppercaseCount = 0;
+        int lowercaseCount = 0;
+        int digitCount = 0;
+        int otherCount = 0;
+
+        for (int i = 0; i < passwordPlaintext.length; i++) {
+            char ch = passwordPlaintext[i];
+            if (Character.isUpperCase(ch)) {
+                uppercaseCount++;
+            } else if (Character.isLowerCase(ch)) {
+                lowercaseCount++;
+            } else if (Character.isDigit(ch)) {
+                digitCount++;
+            } else {
+                otherCount++;
+            }
+        }
+
+        // 字母
+        if ((uppercaseCount > 0 && lowercaseCount == 0)
+                || (uppercaseCount == 0 && lowercaseCount > 0)) {
+            er.score += 10;
+        } else if (uppercaseCount > 0 && lowercaseCount > 0) {
+            er.score += 20;
+        }
+
+        // 数字
+        if (digitCount >= 3) {
+            er.score += 20;
+        } else if (digitCount >= 1) {
+            er.score += 10;
+        }
+
+        // 其它
+        if (otherCount > 1) {
+            er.score += 25;
+        } else if (otherCount == 1) {
+            er.score += 10;
+        }
+
+        // 奖励
+        if (digitCount > 0 && (uppercaseCount + lowercaseCount) > 0) {
+            if (otherCount > 0) {
+                if ( uppercaseCount > 0 && lowercaseCount > 0) {
+                    er.score += 5;
+                }
+                er.score += 3;
+            }
+            er.score += 2;
+        }
+
+        if (er.score >= 80) {
+            er.description = "非常强";
+        } else if (er.score >= 60) {
+            er.description = "强";
+        } else if (er.score >= 50) {
+            er.description = "一般";
+        } else {
+            er.description = "弱";
+        }
+
+        return er;
+    }
+
     // PwdUtil测试
     public static void main(String[] args) {
         String a = hashPwd("admin");
