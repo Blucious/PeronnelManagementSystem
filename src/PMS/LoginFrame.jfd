@@ -13,54 +13,6 @@ new FormModel {
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 				name: "tabbedPane"
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "center:1, center:1, center:150"
-					"$rowSpecs": "center:23, center:23, center:34"
-					"$hGap": 3
-					"$vGap": 3
-					"$alignLeft": true
-					"$alignTop": true
-				} ) {
-					name: "panelLogin"
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "loginLabelAccount"
-						"text": "账户："
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"hAlign": 2
-					} )
-					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "loginTextFieldUserName"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridwidth": 2
-						"gridx": 1
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "loginLabelPassword"
-						"text": "密码："
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 1
-						"hAlign": 2
-					} )
-					add( new FormComponent( "javax.swing.JPasswordField" ) {
-						name: "loginPasswordFieldPassword"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 1
-						"gridwidth": 2
-						"gridx": 1
-					} )
-					add( new FormComponent( "javax.swing.JButton" ) {
-						name: "loginButtonLogin"
-						"text": "登录"
-						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "buttonLoginMouseReleased", true ) )
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 2
-						"hAlign": 0
-						"vAlign": 0
-						"gridwidth": 3
-					} )
-				}, new FormLayoutConstraints( null ) {
-					"title": "登录"
-				} )
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 					"$columnSpecs": "left:67, 0, 150, 0"
 					"$rowSpecs": "center:0, center:0, center:0, 7"
 					"$hGap": 3
@@ -129,6 +81,55 @@ new FormModel {
 					} )
 				}, new FormLayoutConstraints( null ) {
 					"title": "注册"
+				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "center:1, center:1, 150"
+					"$rowSpecs": "center:23, center:23, center:34"
+					"$hGap": 3
+					"$vGap": 3
+					"$alignLeft": true
+					"$alignTop": true
+				} ) {
+					name: "panelLogin"
+					add( new FormComponent( "javax.swing.JPasswordField" ) {
+						name: "loginPasswordFieldPassword"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 1
+						"gridx": 1
+						"gridwidth": 2
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "loginTextFieldUserName"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridwidth": 2
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "loginLabelAccount"
+						"text": "账户："
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"hAlign": 2
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "loginLabelPassword"
+						"text": "密码："
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 1
+						"hAlign": 2
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "loginButtonLogin"
+						"text": "登录"
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "buttonLoginMouseReleased", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 2
+						"hAlign": 0
+						"vAlign": 0
+						"gridwidth": 3
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "登录"
+					"background": sfield java.awt.Color lightGray
 				} )
 			} )
 		}, new FormLayoutConstraints( null ) {
