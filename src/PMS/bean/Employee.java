@@ -1,31 +1,55 @@
 package PMS.bean;
 
-public class Employee {
-    private String empNo;
-    private String empName;
+import java.sql.Date;
 
-    public Employee() {
+public class Employee extends Account {
+    private String no;
+    private Date birthday;
+    private int clockingIn;
+    private String title;
+    private String dept;
 
+    public Employee(String name, String password, boolean passwordIsHashed) {
+        super(name, password, passwordIsHashed);
     }
 
-    public Employee(String empNo, String empName) {
-        this.empNo = empNo;
-        this.empName = empName;
+    public String getNo() {
+        return no;
     }
 
-    public String getEmpNo() {
-        return empNo;
+    public void setNo(String no) {
+        this.no = no;
     }
 
-    public void setEmpNo(String empNo) {
-        this.empNo = empNo;
+    public Date getBirthday() {
+        return birthday;
     }
 
-    public String getEmpName() {
-        return empName;
+    public void setBirthday(Date birthday) {
+        this.birthday = birthday;
     }
 
-    public void setEmpName(String empName) {
-        this.empName = empName;
+    public int getClockingIn() {
+        return clockingIn;
+    }
+
+    public void setClockingIn(int clockingIn) {
+        this.clockingIn = clockingIn;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getDept() {
+        return dept;
+    }
+
+    public void setDept(String dept) {
+        this.dept = dept;
     }
 }
