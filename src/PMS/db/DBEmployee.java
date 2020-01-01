@@ -1,128 +1,179 @@
 package PMS.db;
 
-import examch1.db.MySqlConnnection;
-import examch1.mybean.Employee;
+import PMS.entity.Employee;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-//ÊµÏÖÔ±¹¤±ídepµÄÌí¡¢É¾¡¢¸Ä¡¢²éÊı¾İ¿â²Ù×÷ÀàDBEmployee
+//å®ç°å‘˜å·¥è¡¨depçš„æ·»ã€åˆ ã€æ”¹ã€æŸ¥æ•°æ®åº“æ“ä½œç±»DBEmployee
+
 public class DBEmployee {
-	//Ë½ÓĞ¿Õ¹¹Ôì·½·¨,±£Ö¤±¾Àà²»ÄÜ¹»±»ÊµÀı»¯¡£
-	private DBEmployee(){}
-	
-	//Ìí¼Ó¹ÜÀíÔ±
-	public static void addEmployee(Employee a) {
-		Connection conn = null;
-		try {
-			conn = MySqlConnnection.getConnection(); //»ñµÃÊı¾İÁ¬½Ó
-			PreparedStatement ps = conn
-					.prepareStatement("INSERT INTO emp (empno,empname) VALUES (?,?)");
-			ps.setString(1, a.getEmpNo());
-			ps.setString(2, a.getEmpName());
-			ps.executeUpdate(); // Ö´ĞĞ¸üĞÂ²Ù×÷
-			ps.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			MySqlConnnection.closeConnection(conn);
-		}
-	}
 
-	//É¾³ı¹ÜÀíÔ±
-	public static void deleteEmployee(String id) {
-		Connection conn = null;
-		try {
-			conn = MySqlConnnection.getConnection(); //»ñµÃÊı¾İÁ¬½Ó
-			PreparedStatement ps = conn
-					.prepareStatement("DELETE FROM emp WHERE empno=?");
-			ps.setString(1, id); // ÉèÖÃµÚ1¸öÕ¼Î»·ûµÄÄÚÈİ
-			ps.executeUpdate();// Ö´ĞĞ¸üĞÂ²Ù×÷
-			ps.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			MySqlConnnection.closeConnection(conn);
-		}
-	}
+    //ç§æœ‰ç©ºæ„é€ æ–¹æ³•,ä¿è¯æœ¬ç±»ä¸èƒ½å¤Ÿè¢«å®ä¾‹åŒ–ã€‚
+    private DBEmployee() {
+    }
 
-	//ĞŞ¸Ä¹ÜÀíÔ±
-	public static void updateEmployee(Employee a) {
-		Connection conn = null;
-		try {
-			conn = MySqlConnnection.getConnection();
-			String Sql = "UPDATE emp SET empname=? WHERE empno =?";
-			PreparedStatement ps = conn.prepareStatement(Sql);
-			ps.setString(1, a.getEmpName());
-			ps.setString(2, a.getEmpNo());
-		
-			ps.executeUpdate(); // Ö´ĞĞ¸üĞÂ²Ù×÷
-			ps.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			MySqlConnnection.closeConnection(conn);
-		}
-	}
+    //æ·»åŠ å‘˜å·¥
+    public static void addEmployee(Employee a) {
+        Connection conn = null;
+        try {
+            //è·å¾—æ•°æ®è¿æ¥
+            conn = MySqlConnnection.getConnection();
 
-	//¸ù¾İ¹ÜÀíÔ±idºÅ²éÑ¯
-	public static Employee getEmployee(String id) {
-		Employee a = null;
-		Connection conn = null;
-		try {
-			conn = MySqlConnnection.getConnection();// »ñµÃÊı¾İÁ¬½Ó
-			// ½¨Á¢PreparedStatementÓÃÓÚÖ´ĞĞSQL²Ù×÷
-			PreparedStatement ps = conn
-					.prepareStatement("SELECT * FROM emp WHERE empno=?");
-			ps.setString(1, id); // ÉèÖÃµÚÒ»¸öÕ¼Î»·ûµÄÄÚÈİ
-			ResultSet rs = ps.executeQuery(); // Ö´ĞĞ²éÑ¯£¬·µ»Ø½á¹û¼¯
-			if (rs.next()) { // ÒòÎª¹ÜÀíÔ±idÊÇÎ©Ò»µÄ£¬ËùÒÔÖ»·µ»ØÒ»¸ö½á¹û¼È¿É
-				a = new Employee(rs.getString(1),rs.getString(2));
-			}
-			ps.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			MySqlConnnection.closeConnection(conn);
-		}
-		return a;
-	}
+            // å»ºç«‹PreparedStatementç”¨äºæ‰§è¡ŒSQLæ“ä½œ
+            PreparedStatement ps = conn.prepareStatement(
+                    "INSERT INTO employee VALUES (?,?,?,?,?,?)");
 
-	//²éÑ¯Admin±íÖĞµÄËùÓĞ¼ÇÂ¼£¨¹ÜÀíÔ±£©£¬·µ»Øµü´úÆ÷¶ÔÏó
-	public static Iterator getAllEmployee() {
-		List l = new ArrayList();//Êı×éÁĞ±íÀà¶ÔÏó£¬´óĞ¡¿É×Ô¶¯Ôö¼Ó
-		Connection conn = null;
-		try {
-			conn = MySqlConnnection.getConnection(); // »ñµÃÊı¾İÁ¬½Ó
-			Statement stmt = conn.createStatement(); // ½¨Á¢StatementÓÃÓÚÖ´ĞĞSQL²Ù×÷
-			ResultSet rs = stmt.executeQuery("SELECT * FROM emp");//Ö´ĞĞ²éÑ¯£¬·µ»Ø½á¹û¼¯
-			String s = null;//±£´æemp±íÖĞµÄµÚ2¸ö×Ö¶Î£¨Ô±¹¤ĞÕÃû£©
-			while (rs.next()) {//Ñ­»·µÃµ½ËùÓĞ¼ÇÂ¼£¬²¢Ìí¼Óµ½Êı×éÁĞ±íÖĞ
-				s = rs.getString(2);
-				l.add(new Employee(rs.getString(1),rs.getString(2)));
-			}
-			stmt.close();
-		} catch (Exception ex) {
-			ex.printStackTrace();
-		} finally {
-			MySqlConnnection.closeConnection(conn);
-		}
-		return l.iterator();//·µ»Øµü´úÆ÷¶ÔÏó
-	}
+            // è®¾ç½®å ä½ç¬¦çš„å†…å®¹
+            ps.setString(1, a.getNo());
+            ps.setString(2, a.getName());
+            ps.setDate(3, a.getBirthday());
+            ps.setString(4, a.getDeptNo());
+            ps.setString(5, a.getTitle());
+            ps.setInt(6, a.getClockingIn());
 
-	public static void main(String[] args) {
-		// TODO Auto-generated method stub
-		Employee admin = new Employee("e310", "ÕÅÈı");
-		DBEmployee.addEmployee(admin);
-		for (Iterator it = DBEmployee.getAllEmployee(); it.hasNext();) {
-			Employee a1 = (Employee) it.next();
-			System.out.println(a1.getEmpNo() + "\t" + a1.getEmpName());
-		}
-	}
+            // æ‰§è¡Œæ›´æ–°æ“ä½œ
+            ps.executeUpdate();
+
+            // å…³é—­
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MySqlConnnection.closeConnection(conn);
+        }
+    }
+
+    //åˆ é™¤å‘˜å·¥
+    public static void deleteEmployee(String id) {
+        Connection conn = null;
+        try {
+            //è·å¾—æ•°æ®è¿æ¥
+            conn = MySqlConnnection.getConnection();
+
+            // å»ºç«‹PreparedStatementç”¨äºæ‰§è¡ŒSQLæ“ä½œ
+            PreparedStatement ps = conn.prepareStatement(
+                    "DELETE FROM employee WHERE empNo=?");
+            // è®¾ç½®å ä½ç¬¦çš„å†…å®¹
+            ps.setString(1, id); // è®¾ç½®ç¬¬1ä¸ªå ä½ç¬¦çš„å†…å®¹
+
+            // æ‰§è¡Œæ›´æ–°æ“ä½œ
+            ps.executeUpdate();
+            ps.close(); // å…³é—­
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MySqlConnnection.closeConnection(conn);
+        }
+    }
+
+    //ä¿®æ”¹å‘˜å·¥
+    public static void updateEmployee(Employee a) {
+        Connection conn = null;
+        try {
+            conn = MySqlConnnection.getConnection();
+
+            PreparedStatement ps = conn.prepareStatement(
+                    String.join("",
+                            "UPDATE employee ",
+                            "SET empName=?, empBirthday=?, empDeptNo=?, " +
+                                    "empTitle=?ï¼Œ empClockingIn=?",
+                            "WHERE empNo=?")
+            );
+            // SETå­å¥
+            ps.setString(1, a.getName());
+            ps.setDate(2, a.getBirthday());
+            ps.setString(3, a.getDeptNo());
+            ps.setString(4, a.getTitle());
+            ps.setInt(5, a.getClockingIn());
+            // WHEREå­å¥
+            ps.setString(6, a.getNo());
+
+            // æ‰§è¡Œæ›´æ–°æ“ä½œ
+            ps.executeUpdate();
+            // å…³é—­
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MySqlConnnection.closeConnection(conn);
+        }
+    }
+
+    //æ ¹æ®å‘˜å·¥idå·æŸ¥è¯¢
+    public static Employee getEmployee(String id) {
+        Employee emp = null;
+        Connection conn = null;
+        try {
+            // è·å¾—æ•°æ®è¿æ¥
+            conn = MySqlConnnection.getConnection();
+
+            // å»ºç«‹PreparedStatementç”¨äºæ‰§è¡ŒSQLæ“ä½œ
+            PreparedStatement ps = conn.prepareStatement(
+                    "SELECT * FROM employee WHERE empNo=?");
+            ps.setString(1, id); // è®¾ç½®ç¬¬ä¸€ä¸ªå ä½ç¬¦çš„å†…å®¹
+
+            // æ‰§è¡ŒæŸ¥è¯¢ï¼Œè¿”å›ç»“æœé›†
+            ResultSet rs = ps.executeQuery();
+            if (rs.next()) { // å› ä¸ºå‘˜å·¥idæ˜¯æƒŸä¸€çš„ï¼Œæ‰€ä»¥åªè¿”å›ä¸€ä¸ªç»“æœæ—¢å¯
+                emp = new Employee();
+                emp.setNo(rs.getString(1));
+                emp.setName(rs.getString(2));
+                emp.setBirthday(rs.getDate(3));
+                emp.setDeptNo(rs.getString(4));
+                emp.setTitle(rs.getString(5));
+                emp.setClockingIn(rs.getInt(6));
+            }
+            ps.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MySqlConnnection.closeConnection(conn);
+        }
+        return emp;
+    }
+
+    //æŸ¥è¯¢è¡¨ä¸­çš„æ‰€æœ‰è®°å½•ï¼ˆç®¡ç†å‘˜ï¼‰ï¼Œè¿”å›è¿­ä»£å™¨å¯¹è±¡
+    public static Iterator getAllEmployee() {
+        List<Employee> list = new ArrayList<>();//æ•°ç»„åˆ—è¡¨ç±»å¯¹è±¡ï¼Œå¤§å°å¯è‡ªåŠ¨å¢åŠ 
+        Connection conn = null;
+        try {
+            conn = MySqlConnnection.getConnection();
+
+            Statement stmt = conn.createStatement(); // å»ºç«‹Statementç”¨äºæ‰§è¡ŒSQLæ“ä½œ
+            ResultSet rs = stmt.executeQuery("SELECT * FROM employee"); //æ‰§è¡ŒæŸ¥è¯¢ï¼Œè¿”å›ç»“æœé›†
+            while (rs.next()) { //å¾ªç¯å¾—åˆ°æ‰€æœ‰è®°å½•ï¼Œå¹¶æ·»åŠ åˆ°æ•°ç»„åˆ—è¡¨ä¸­
+                Employee emp = new Employee();
+                emp.setNo(rs.getString(1));
+                emp.setName(rs.getString(2));
+                emp.setBirthday(rs.getDate(3));
+                emp.setDeptNo(rs.getString(4));
+                emp.setTitle(rs.getString(5));
+                emp.setClockingIn(rs.getInt(6));
+                list.add(emp);
+            }
+            stmt.close();
+            rs.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            MySqlConnnection.closeConnection(conn);
+        }
+        return list.iterator();//è¿”å›è¿­ä»£å™¨å¯¹è±¡
+    }
+
+    public static void main(String[] args) {
+        Employee admin = new Employee(
+        		"e310", "å¼ ä¸‰", Date.valueOf("1998-5-4"),
+				"1001", "å‘˜å·¥", 2);
+        DBEmployee.addEmployee(admin);
+
+        for (Iterator it = DBEmployee.getAllEmployee(); it.hasNext(); ) {
+            Employee a1 = (Employee) it.next();
+            System.out.println(a1.getNo() + "\t" + a1.getName());
+        }
+    }
 
 }

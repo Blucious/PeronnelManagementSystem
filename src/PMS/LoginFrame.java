@@ -10,9 +10,10 @@ import java.awt.event.*;
 import java.util.Arrays;
 import javax.swing.*;
 
-import PMS.bean.Account;
+import PMS.entity.Account;
 import PMS.security.PwdUtil;
 import PMS.db.DBAccount;
+import PMS.op.OPAccount;
 
 /**
  * @author unknown
@@ -26,17 +27,17 @@ public class LoginFrame extends JFrame {
         String userName = loginTextFieldUserName.getText();
         char[] userPassword = loginPasswordFieldPassword.getPassword();
 
-        // ≤È—Ø ‰»Îµƒ”√ªß√˚∂‘”¶µƒ’Àªß
+        // Êü•ËØ¢ËæìÂÖ•ÁöÑÁî®Êà∑ÂêçÂØπÂ∫îÁöÑË¥¶Êà∑
         Account account = DBAccount.getAccount(userName);
 
-        // ±»Ωœ ˝◊÷’™“™
+        // ÊØîËæÉÊï∞Â≠óÊëòË¶Å
         if (account != null &&
                 PwdUtil.checkPwd(userPassword, account.getHashedPassword())) {
             JOptionPane.showMessageDialog(
-                    this, "µ«¬º≥…π¶");
+                    this, "ÁôªÂΩïÊàêÂäü");
         } else {
             JOptionPane.showMessageDialog(
-                    this, "’ÀªßªÚ√‹¬Î¥ÌŒÛ");
+                    this, "Ë¥¶Êà∑ÊàñÂØÜÁ†ÅÈîôËØØ");
         }
 
     }
@@ -47,36 +48,35 @@ public class LoginFrame extends JFrame {
         char[] userPassword = registerPasswordFieldPassword.getPassword();
         char[] userPasswordAgain = registerPasswordFieldPasswordAgain.getPassword();
 
-        // ’Àªß√˚≤ª‘ –ÌŒ™ø’
+        // Ë¥¶Êà∑Âêç‰∏çÂÖÅËÆ∏‰∏∫Á©∫
         if (userName.length() > 0) {
-            // ¡Ω¥Œ ‰»Îµƒ√‹¬Î±ÿ–Îœ‡Õ¨
+            // ‰∏§Ê¨°ËæìÂÖ•ÁöÑÂØÜÁ†ÅÂøÖÈ°ªÁõ∏Âêå
             if (Arrays.equals(userPassword, userPasswordAgain)) {
-                // √‹¬Î∆¿π¿±ÿ–Î¥Û”⁄50∑÷
+                // ÂØÜÁ†ÅËØÑ‰º∞ÂøÖÈ°ªÂ§ß‰∫é50ÂàÜ
                 PwdUtil.EvaluationResult er = PwdUtil.evaluatePwd(userPassword);
                 if (er.score >= 50) {
-                    // ÃÌº”–¬”√ªß
-                    Account account = new Account(
-                            userName, userPassword, false);
+                    // Ê∑ªÂä†Êñ∞Áî®Êà∑
+                    Account account = new Account(userName, new String(userPassword), false);
                     boolean state = DBAccount.addAccount(account);
 
-                    // ≈–∂œ «∑ÒÃÌº”≥…π¶£¨”–ø…ƒ‹“ÚŒ™’Àªß¥Ê‘⁄∂¯ÃÌº” ß∞‹
+                    // Âà§Êñ≠ÊòØÂê¶Ê∑ªÂä†ÊàêÂäüÔºåÊúâÂèØËÉΩÂõ†‰∏∫Ë¥¶Êà∑Â≠òÂú®ËÄåÊ∑ªÂä†Â§±Ë¥•
                     if (state) {
                         JOptionPane.showMessageDialog(
-                                this, "◊¢≤·≥…π¶");
-                        // ÷ÿ÷√√‹¬Î∆¿π¿–≈œ¢
+                                this, "Ê≥®ÂÜåÊàêÂäü");
+                        // ÈáçÁΩÆÂØÜÁ†ÅËØÑ‰º∞‰ø°ÊÅØ
                         registerLabelEvalution.setText("/");
                     }
                 } else {
                     JOptionPane.showMessageDialog(
-                            this, "√‹¬Î«ø∂»Œ¥¥ÔµΩ±Í◊º");
+                            this, "ÂØÜÁ†ÅÂº∫Â∫¶Êú™ËææÂà∞Ê†áÂáÜ");
                 }
             } else {
                 JOptionPane.showMessageDialog(
-                        this, "¡Ω¥Œ ‰»Îµƒ√‹¬Î≤ªÕ¨");
+                        this, "‰∏§Ê¨°ËæìÂÖ•ÁöÑÂØÜÁ†Å‰∏çÂêå");
             }
         } else {
             JOptionPane.showMessageDialog(
-                    this, "’Àªß√˚≤ª‘ –ÌŒ™ø’");
+                    this, "Ë¥¶Êà∑Âêç‰∏çÂÖÅËÆ∏‰∏∫Á©∫");
         }
     }
 
@@ -90,6 +90,12 @@ public class LoginFrame extends JFrame {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - c
         tabbedPane = new JTabbedPane();
+        panelLogin = new JPanel();
+        loginPasswordFieldPassword = new JPasswordField();
+        loginTextFieldUserName = new JTextField();
+        loginLabelAccount = new JLabel();
+        loginLabelPassword = new JLabel();
+        loginButtonLogin = new JButton();
         panelRegister = new JPanel();
         registerLabelAccount = new JLabel();
         registerTextFieldAccount = new JTextField();
@@ -99,12 +105,6 @@ public class LoginFrame extends JFrame {
         registerLabelPasswordAgain = new JLabel();
         registerPasswordFieldPasswordAgain = new JPasswordField();
         registerButtonRegister = new JButton();
-        panelLogin = new JPanel();
-        loginPasswordFieldPassword = new JPasswordField();
-        loginTextFieldUserName = new JTextField();
-        loginLabelAccount = new JLabel();
-        loginLabelPassword = new JLabel();
-        loginButtonLogin = new JButton();
 
         //======== this ========
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -116,15 +116,56 @@ public class LoginFrame extends JFrame {
         //======== tabbedPane ========
         {
 
+            //======== panelLogin ========
+            {
+                panelLogin.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new
+                javax. swing. border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax
+                . swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM, new java
+                .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt
+                . Color. red) ,panelLogin. getBorder( )) ); panelLogin. addPropertyChangeListener (new java. beans.
+                PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062ord\u0065r" .
+                equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
+                panelLogin.setLayout(new GridBagLayout());
+                ((GridBagLayout)panelLogin.getLayout()).columnWidths = new int[] {4, 4, 150, 0};
+                ((GridBagLayout)panelLogin.getLayout()).rowHeights = new int[] {26, 26, 34, 0};
+                ((GridBagLayout)panelLogin.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+                ((GridBagLayout)panelLogin.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+                panelLogin.add(loginPasswordFieldPassword, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                    new Insets(0, 0, 3, 0), 0, 0));
+                panelLogin.add(loginTextFieldUserName, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
+                    new Insets(0, 0, 3, 0), 0, 0));
+
+                //---- loginLabelAccount ----
+                loginLabelAccount.setText("\u8d26\u6237\uff1a");
+                panelLogin.add(loginLabelAccount, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.WEST, GridBagConstraints.NONE,
+                    new Insets(0, 0, 3, 3), 0, 0));
+
+                //---- loginLabelPassword ----
+                loginLabelPassword.setText("\u5bc6\u7801\uff1a");
+                panelLogin.add(loginLabelPassword, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.WEST, GridBagConstraints.NONE,
+                    new Insets(0, 0, 3, 3), 0, 0));
+
+                //---- loginButtonLogin ----
+                loginButtonLogin.setText("\u767b\u5f55");
+                loginButtonLogin.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        buttonLoginMouseReleased(e);
+                    }
+                });
+                panelLogin.add(loginButtonLogin, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(0, 0, 0, 0), 0, 0));
+            }
+            tabbedPane.addTab("\u767b\u5f55", panelLogin);
+            tabbedPane.setBackgroundAt(0, Color.lightGray);
+
             //======== panelRegister ========
             {
-                panelRegister.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new
-                javax . swing. border .EmptyBorder ( 0, 0 ,0 , 0) ,  "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e" , javax
-                . swing .border . TitledBorder. CENTER ,javax . swing. border .TitledBorder . BOTTOM, new java
-                . awt .Font ( "D\u0069al\u006fg", java .awt . Font. BOLD ,12 ) ,java . awt
-                . Color .red ) ,panelRegister. getBorder () ) ); panelRegister. addPropertyChangeListener( new java. beans .
-                PropertyChangeListener ( ){ @Override public void propertyChange (java . beans. PropertyChangeEvent e) { if( "\u0062or\u0064er" .
-                equals ( e. getPropertyName () ) )throw new RuntimeException( ) ;} } );
                 panelRegister.setLayout(new GridBagLayout());
                 ((GridBagLayout)panelRegister.getLayout()).columnWidths = new int[] {70, 0, 153, 0, 0};
                 ((GridBagLayout)panelRegister.getLayout()).rowHeights = new int[] {0, 0, 0, 7, 0};
@@ -186,47 +227,6 @@ public class LoginFrame extends JFrame {
                     new Insets(0, 0, 0, 3), 0, 0));
             }
             tabbedPane.addTab("\u6ce8\u518c", panelRegister);
-
-            //======== panelLogin ========
-            {
-                panelLogin.setLayout(new GridBagLayout());
-                ((GridBagLayout)panelLogin.getLayout()).columnWidths = new int[] {4, 4, 150, 0};
-                ((GridBagLayout)panelLogin.getLayout()).rowHeights = new int[] {26, 26, 34, 0};
-                ((GridBagLayout)panelLogin.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
-                ((GridBagLayout)panelLogin.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
-                panelLogin.add(loginPasswordFieldPassword, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 0, 3, 0), 0, 0));
-                panelLogin.add(loginTextFieldUserName, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 0, 3, 0), 0, 0));
-
-                //---- loginLabelAccount ----
-                loginLabelAccount.setText("\u8d26\u6237\uff1a");
-                panelLogin.add(loginLabelAccount, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.WEST, GridBagConstraints.NONE,
-                    new Insets(0, 0, 3, 3), 0, 0));
-
-                //---- loginLabelPassword ----
-                loginLabelPassword.setText("\u5bc6\u7801\uff1a");
-                panelLogin.add(loginLabelPassword, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.WEST, GridBagConstraints.NONE,
-                    new Insets(0, 0, 3, 3), 0, 0));
-
-                //---- loginButtonLogin ----
-                loginButtonLogin.setText("\u767b\u5f55");
-                loginButtonLogin.addMouseListener(new MouseAdapter() {
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        buttonLoginMouseReleased(e);
-                    }
-                });
-                panelLogin.add(loginButtonLogin, new GridBagConstraints(0, 2, 3, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
-                    new Insets(0, 0, 0, 0), 0, 0));
-            }
-            tabbedPane.addTab("\u767b\u5f55", panelLogin);
-            tabbedPane.setBackgroundAt(1, Color.lightGray);
         }
         contentPane.add(tabbedPane);
         setSize(365, 265);
@@ -237,6 +237,12 @@ public class LoginFrame extends JFrame {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - c
     private JTabbedPane tabbedPane;
+    private JPanel panelLogin;
+    private JPasswordField loginPasswordFieldPassword;
+    private JTextField loginTextFieldUserName;
+    private JLabel loginLabelAccount;
+    private JLabel loginLabelPassword;
+    private JButton loginButtonLogin;
     private JPanel panelRegister;
     private JLabel registerLabelAccount;
     private JTextField registerTextFieldAccount;
@@ -246,15 +252,9 @@ public class LoginFrame extends JFrame {
     private JLabel registerLabelPasswordAgain;
     private JPasswordField registerPasswordFieldPasswordAgain;
     private JButton registerButtonRegister;
-    private JPanel panelLogin;
-    private JPasswordField loginPasswordFieldPassword;
-    private JTextField loginTextFieldUserName;
-    private JLabel loginLabelAccount;
-    private JLabel loginLabelPassword;
-    private JButton loginButtonLogin;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 
-    //≤‚ ‘LoginFrame¿‡
+    //ÊµãËØïLoginFrameÁ±ª
     public static void main(String[] args) {
         JFrame frame = new LoginFrame();
         frame.setVisible(true);

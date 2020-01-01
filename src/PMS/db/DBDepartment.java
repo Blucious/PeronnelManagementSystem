@@ -1,7 +1,6 @@
 package PMS.db;
 
-import examch1.db.MySqlConnnection;
-import examch1.mybean.Department;
+import PMS.entity.Department;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -13,41 +12,42 @@ import java.util.Iterator;
 import java.util.List;
 
 
-//ÊµÏÖDepartmentµÄÌí¡¢É¾¡¢¸Ä¡¢²éÊı¾İ¿â²Ù×÷ÀàDBDepartment
+//å®ç°Departmentçš„æ·»ã€åˆ ã€æ”¹ã€æŸ¥æ•°æ®åº“æ“ä½œç±»DBDepartment
 public abstract class DBDepartment {
 
-    //Ë½ÓĞ¿Õ¹¹Ôì·½·¨,±£Ö¤±¾Àà²»ÄÜ¹»±»ÊµÀı»¯¡£
+    //ç§æœ‰ç©ºæ„é€ æ–¹æ³•,ä¿è¯æœ¬ç±»ä¸èƒ½å¤Ÿè¢«å®ä¾‹åŒ–ã€‚
     private DBDepartment() {
     }
 
-    // Ìí¼Ó
+    // æ·»åŠ 
     public static void addDepartment(Department q) {
         Connection conn = null;
         try {
-            conn = MySqlConnnection.getConnection(); // »ñµÃÊı¾İÁ¬½Ó
+            conn = MySqlConnnection.getConnection(); // è·å¾—æ•°æ®è¿æ¥
             PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO Dep (depNo,depName)VALUES (?,?)");
-            ps.setString(1, q.getDepNo());
-            ps.setString(2, q.getDepName());
+                    "INSERT INTO department (depNo,depName) VALUES (?,?)");
+            ps.setString(1, q.getNo());
+            ps.setString(2, q.getName());
 
-            ps.executeUpdate(); // Ö´ĞĞ¸üĞÂ²Ù×÷
+            ps.executeUpdate(); // æ‰§è¡Œæ›´æ–°æ“ä½œ
             ps.close();
-        } catch (Exception ex) {
-            JOptionPane.showMessageDialog(null, "¸Ã±àºÅÒÑ´æÔÚ£¡²»ÄÜÌí¼Ó£¡");
+        } catch (Exception e) {
+//            JOptionPane.showMessageDialog(null, "è¯¥ç¼–å·å·²å­˜åœ¨ï¼ä¸èƒ½æ·»åŠ ï¼");
+            JOptionPane.showMessageDialog(null, e.getMessage());
         } finally {
             MySqlConnnection.closeConnection(conn);
         }
     }
 
-    //É¾³ı
+    //åˆ é™¤
     public static void deleteDepartment(String id) {
         Connection conn = null;
         try {
-            conn = MySqlConnnection.getConnection(); // »ñµÃÊı¾İÁ¬½Ó
+            conn = MySqlConnnection.getConnection(); // è·å¾—æ•°æ®è¿æ¥
             PreparedStatement ps = conn.prepareStatement(
-                    "DELETE FROM dep WHERE depNo=?");
-            ps.setString(1, id); // ÉèÖÃµÚÒ»¸öÕ¼Î»·ûµÄÄÚÈİ
-            ps.executeUpdate();  // Ö´ĞĞ¸üĞÂ²Ù×÷
+                    "DELETE FROM department WHERE depNo=?");
+            ps.setString(1, id); // è®¾ç½®ç¬¬ä¸€ä¸ªå ä½ç¬¦çš„å†…å®¹
+            ps.executeUpdate();  // æ‰§è¡Œæ›´æ–°æ“ä½œ
             ps.close();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -56,18 +56,18 @@ public abstract class DBDepartment {
         }
     }
 
-    //ĞŞ¸Ä
+    //ä¿®æ”¹
     public static void updateDepartment(Department q) {
         Connection conn = null;
         try {
             conn = MySqlConnnection.getConnection();
-            String Sql = "UPDATE dep SET depNo =?,depName =? WHERE depNo =?";
+            String Sql = "UPDATE department SET depNo=?,depName=? WHERE depNo=?";
             PreparedStatement ps = conn.prepareStatement(Sql);
-            ps.setString(1, q.getDepNo());
-            ps.setString(2, q.getDepName());
-            ps.setString(3, q.getDepNo());
+            ps.setString(1, q.getNo());
+            ps.setString(2, q.getName());
+            ps.setString(3, q.getNo());
 
-            ps.executeUpdate(); // Ö´ĞĞ¸üĞÂ²Ù×÷
+            ps.executeUpdate(); // æ‰§è¡Œæ›´æ–°æ“ä½œ
             ps.close();
         } catch (Exception ex) {
             ex.printStackTrace();
@@ -76,19 +76,19 @@ public abstract class DBDepartment {
         }
     }
 
-    //¸ù¾İidºÅ²éÑ¯
+    //æ ¹æ®idå·æŸ¥è¯¢
     public static Department getDepartment(String id) {
         Department q = null;
         Connection conn = null;
         try {
-            conn = MySqlConnnection.getConnection();// »ñµÃÊı¾İÁ¬½Ó
+            conn = MySqlConnnection.getConnection();// è·å¾—æ•°æ®è¿æ¥
             PreparedStatement ps = conn.prepareStatement(
-                    "SELECT * FROM dep WHERE depNo=?");
-            ps.setString(1, id); // ÉèÖÃµÚÒ»¸öÕ¼Î»·ûµÄÄÚÈİ
+                    "SELECT * FROM department WHERE depNo=?");
+            ps.setString(1, id); // è®¾ç½®ç¬¬ä¸€ä¸ªå ä½ç¬¦çš„å†…å®¹
 
 
-            ResultSet rs = ps.executeQuery(); //Ö´ĞĞ²éÑ¯£¬·µ»Ø½á¹û¼¯
-            if (rs.next()) { // ÒòÎªidÊÇÎ©Ò»µÄ£¬ËùÒÔÖ»·µ»ØÒ»¸ö½á¹û¼È¿É
+            ResultSet rs = ps.executeQuery(); //æ‰§è¡ŒæŸ¥è¯¢ï¼Œè¿”å›ç»“æœé›†
+            if (rs.next()) { // å› ä¸ºidæ˜¯æƒŸä¸€çš„ï¼Œæ‰€ä»¥åªè¿”å›ä¸€ä¸ªç»“æœæ—¢å¯
                 q = new Department(rs.getString(1), rs.getString(2));
             }
             ps.close();
@@ -100,16 +100,16 @@ public abstract class DBDepartment {
         return q;
     }
 
-    //²éÑ¯Department±íÖĞµÄËùÓĞ¼ÇÂ¼£¬·µ»Øµü´úÆ÷¶ÔÏó
+    //æŸ¥è¯¢Departmentè¡¨ä¸­çš„æ‰€æœ‰è®°å½•ï¼Œè¿”å›è¿­ä»£å™¨å¯¹è±¡
     public static Iterator getAllDepartment() {
-        List l = new ArrayList(); //Êı×éÁĞ±íÀà¶ÔÏó£¬´óĞ¡¿É×Ô¶¯Ôö¼Ó
+        List l = new ArrayList(); //æ•°ç»„åˆ—è¡¨ç±»å¯¹è±¡ï¼Œå¤§å°å¯è‡ªåŠ¨å¢åŠ 
         Connection conn = null;
         try {
-            conn = MySqlConnnection.getConnection(); // »ñµÃÊı¾İÁ¬½Ó
-            Statement stmt = conn.createStatement(); // ½¨Á¢StatementÓÃÓÚÖ´ĞĞSQL²Ù×÷
-            ResultSet rs = stmt.executeQuery("SELECT * FROM dep"); // Ö´ĞĞ²éÑ¯
-            String s = null;//±£´æDepartment±íÖĞµÄµÚ2¸ö×Ö¶Î
-            while (rs.next()) {//Ñ­»·µÃµ½ËùÓĞ¼ÇÂ¼£¬²¢Ìí¼Óµ½Êı×éÁĞ±íÖĞ
+            conn = MySqlConnnection.getConnection(); // è·å¾—æ•°æ®è¿æ¥
+            Statement stmt = conn.createStatement(); // å»ºç«‹Statementç”¨äºæ‰§è¡ŒSQLæ“ä½œ
+            ResultSet rs = stmt.executeQuery("SELECT * FROM department"); // æ‰§è¡ŒæŸ¥è¯¢
+            String s = null;//ä¿å­˜Departmentè¡¨ä¸­çš„ç¬¬2ä¸ªå­—æ®µ
+            while (rs.next()) {//å¾ªç¯å¾—åˆ°æ‰€æœ‰è®°å½•ï¼Œå¹¶æ·»åŠ åˆ°æ•°ç»„åˆ—è¡¨ä¸­
 
                 l.add(new Department(rs.getString(1), rs.getString(2)));
             }
@@ -119,20 +119,18 @@ public abstract class DBDepartment {
         } finally {
             MySqlConnnection.closeConnection(conn);
         }
-        return l.iterator();//·µ»Øµü´úÆ÷¶ÔÏó
+        return l.iterator();//è¿”å›è¿­ä»£å™¨å¯¹è±¡
     }
 
-    //²âÊÔDBDepartmentÀà
+    //æµ‹è¯•DBDepartmentç±»
     public static void main(String[] args) {
-        Department q1 = new Department("400s", "²âÊÔ²¿");
-        //	DBDepartment.addDepartment(q1);
-        DBDepartment.deleteDepartment("ch1_2");
-
+        Department newDept = new Department("test", "æµ‹è¯•éƒ¨");
+        DBDepartment.addDepartment(newDept);
+        DBDepartment.deleteDepartment("test");
 
         for (Iterator it = DBDepartment.getAllDepartment(); it.hasNext(); ) {
-            Department c = (Department) it.next();
-            System.out.println("@" + c.getDepNo() + "\n@" + c.getDepName()
-                    + "\n");
+            Department d = (Department) it.next();
+            System.out.printf("%s - %s\n", d.getNo(), d.getName());
         }
     }
 }

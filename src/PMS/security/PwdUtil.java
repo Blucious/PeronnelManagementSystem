@@ -1,28 +1,28 @@
 package PMS.security;
 
 /*
- * ²Î¿¼:
- *      jBCrypt¹ÙÍø ¡ª¡ª http://www.mindrot.org/projects/jBCrypt/
- *      JavaÍ¨¹ýBCrypt¼ÓÃÜ ¡ª¡ª https://www.cnblogs.com/xingzc/p/8624007.html
+ * å‚è€ƒ:
+ *      jBCryptå®˜ç½‘ â€”â€” http://www.mindrot.org/projects/jBCrypt/
+ *      Javaé€šè¿‡BCryptåŠ å¯† â€”â€” https://www.cnblogs.com/xingzc/p/8624007.html
  */
 
-// ÃÜÂë¹¤¾ßÀàPwdUtil£¬ÊµÏÖÃÜÂëµÄÕªÒª¼ÆËã¡¢ºÍÑéÖ¤¹¦ÄÜ
+// å¯†ç å·¥å…·ç±»PwdUtilï¼Œå®žçŽ°å¯†ç çš„æ‘˜è¦è®¡ç®—ã€å’ŒéªŒè¯åŠŸèƒ½
 public class PwdUtil {
 
-    //Ë½ÓÐ¿Õ¹¹Ôì·½·¨,±£Ö¤±¾Àà²»ÄÜ¹»±»ÊµÀý»¯¡£
+    //ç§æœ‰ç©ºæž„é€ æ–¹æ³•,ä¿è¯æœ¬ç±»ä¸èƒ½å¤Ÿè¢«å®žä¾‹åŒ–ã€‚
     private PwdUtil() {
     }
 
-    // ¼ÆËãÃÜÂëµÄÊý×ÖÕªÒª
+    // è®¡ç®—å¯†ç çš„æ•°å­—æ‘˜è¦
     public static String hashPwd(String pw) {
-        // bcrypt¼ÓÃÜºóµÄ×Ö·û´®ÐÎÈç£º
-        //     $2a$10$asdjflkaydgigadfahgl.asdfaoygoqhgasldhf£¬
-        // ÆäÖÐ£º
-        //     ÊÇ·Ö¸î·û£¬ÎÞÒâÒå£»
-        //     2aÊÇbcrypt¼ÓÃÜ°æ±¾ºÅ£»
-        //     10ÊÇcostµÄÖµ£»
-        //     ¶øºóµÄÇ°22Î»ÊÇsaltÖµ£»
-        //     ÔÙÈ»ºóµÄ×Ö·û´®¾ÍÊÇÃÜÂëµÄÃÜÎÄÁË£»
+        // bcryptåŠ å¯†åŽçš„å­—ç¬¦ä¸²å½¢å¦‚ï¼š
+        //     $2a$10$asdjflkaydgigadfahgl.asdfaoygoqhgasldhfï¼Œ
+        // å…¶ä¸­ï¼š
+        //     æ˜¯åˆ†å‰²ç¬¦ï¼Œæ— æ„ä¹‰ï¼›
+        //     2aæ˜¯bcryptåŠ å¯†ç‰ˆæœ¬å·ï¼›
+        //     10æ˜¯costçš„å€¼ï¼›
+        //     è€ŒåŽçš„å‰22ä½æ˜¯saltå€¼ï¼›
+        //     å†ç„¶åŽçš„å­—ç¬¦ä¸²å°±æ˜¯å¯†ç çš„å¯†æ–‡äº†ï¼›
 
         String salt = BCrypt.gensalt();
         return BCrypt.hashpw(pw, salt);
@@ -32,7 +32,7 @@ public class PwdUtil {
         return hashPwd(new String(password));
     }
 
-    // ÃÜÂëÑéÖ¤
+    // å¯†ç éªŒè¯
     public static boolean checkPwd(String plaintext, String hashed) {
         return BCrypt.checkpw(plaintext, hashed);
     }
@@ -56,18 +56,18 @@ public class PwdUtil {
 
         @Override
         public String toString() {
-            return String.format("Ç¿¶È(%d) - %s", score, description);
+            return String.format("å¼ºåº¦(%d) - %s", score, description);
         }
     }
 
-    // ÆÀ¹ÀÃÜÂë
+    // è¯„ä¼°å¯†ç 
     public static EvaluationResult evaluatePwd(char[] passwordPlaintext) {
-        // ²Î¿¼£º
-        // ËµËµÃÜÂëÇ¿¶È¹æÔò ¡ª¡ª https://zhuanlan.zhihu.com/p/25545606
+        // å‚è€ƒï¼š
+        // è¯´è¯´å¯†ç å¼ºåº¦è§„åˆ™ â€”â€” https://zhuanlan.zhihu.com/p/25545606
 
         EvaluationResult er = new EvaluationResult();
 
-        // ÃÜÂë³¤¶È
+        // å¯†ç é•¿åº¦
         if (passwordPlaintext.length >= 8) {
             er.score += 25;
         } else if (passwordPlaintext.length >= 5) {
@@ -94,7 +94,7 @@ public class PwdUtil {
             }
         }
 
-        // ×ÖÄ¸
+        // å­—æ¯
         if ((uppercaseCount > 0 && lowercaseCount == 0)
                 || (uppercaseCount == 0 && lowercaseCount > 0)) {
             er.score += 10;
@@ -102,21 +102,21 @@ public class PwdUtil {
             er.score += 20;
         }
 
-        // Êý×Ö
+        // æ•°å­—
         if (digitCount >= 3) {
             er.score += 20;
         } else if (digitCount >= 1) {
             er.score += 10;
         }
 
-        // ÆäËü
+        // å…¶å®ƒ
         if (otherCount > 1) {
             er.score += 25;
         } else if (otherCount == 1) {
             er.score += 10;
         }
 
-        // ½±Àø
+        // å¥–åŠ±
         if (digitCount > 0 && (uppercaseCount + lowercaseCount) > 0) {
             if (otherCount > 0) {
                 if ( uppercaseCount > 0 && lowercaseCount > 0) {
@@ -128,19 +128,19 @@ public class PwdUtil {
         }
 
         if (er.score >= 80) {
-            er.description = "·Ç³£Ç¿";
+            er.description = "éžå¸¸å¼º";
         } else if (er.score >= 60) {
-            er.description = "Ç¿";
+            er.description = "å¼º";
         } else if (er.score >= 50) {
-            er.description = "Ò»°ã";
+            er.description = "ä¸€èˆ¬";
         } else {
-            er.description = "Èõ";
+            er.description = "å¼±";
         }
 
         return er;
     }
 
-    // PwdUtil²âÊÔ
+    // PwdUtilæµ‹è¯•
     public static void main(String[] args) {
         String a = hashPwd("admin");
         boolean r = BCrypt.checkpw("admin", a);

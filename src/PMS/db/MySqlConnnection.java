@@ -5,42 +5,44 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-//Êı¾İ¿âÁ¬½ÓÀàMySqlConnnection¡£Í¨¹ıµ÷ÓÃÀàµÄ¾²Ì¬·½·¨»ñµÃÊı¾İ¿âÁ¬½Ó¡£
+//æ•°æ®åº“è¿æ¥ç±»MySqlConnnectionã€‚é€šè¿‡è°ƒç”¨ç±»çš„é™æ€æ–¹æ³•è·å¾—æ•°æ®åº“è¿æ¥ã€‚
 public abstract class MySqlConnnection {
 
-    //Ë½ÓĞ¿Õ¹¹Ôì·½·¨,±£Ö¤±¾Àà²»ÄÜ¹»±»ÊµÀı»¯¡£
+    //ç§æœ‰ç©ºæ„é€ æ–¹æ³•,ä¿è¯æœ¬ç±»ä¸èƒ½å¤Ÿè¢«å®ä¾‹åŒ–ã€‚
     private MySqlConnnection() {
     }
 
-    //»ñµÃÊı¾İ¿âÁ¬½Ó
+    //è·å¾—æ•°æ®åº“è¿æ¥
     public static Connection getConnection() {
         Connection conn = null;
         try {
-            //¼ÓÔØMySQL JDBC Çı¶¯³ÌĞòÃû³Æ
-//			Class.forName("org.gjt.mm.mysql.Driver");
+            //åŠ è½½MySQL JDBC é©±åŠ¨ç¨‹åºåç§°
             Class.forName("com.mysql.jdbc.Driver");
-            //Êı¾İ¿âÁ¬½Ó²ÎÊı¡£
-            String serverName = "localhost"; 	// Êı¾İ¿âÖ÷»úÃû³Æ
-            String dbName = "pms";   		// Êı¾İ¿âÃû³Æ
-            String url = "jdbc:mysql://" + serverName + "/" + dbName;
-            String username = "root";    		//MySqlÓÃ»§Ãû
-            String password = "";  				//MySqlÃÜÂë
-            conn = DriverManager.getConnection(url, username, password); //½¨Á¢Á¬½Ó
+
+            //æ•°æ®åº“è¿æ¥å‚æ•°ã€‚
+            String serverName = "localhost";    // æ•°æ®åº“ä¸»æœºåç§°
+            String dbName = "newpms";        // æ•°æ®åº“åç§°
+            String parameter = "?useUnicode=true&characterEncoding=UTF-8"; // æ•°æ®åº“è¿æ¥å‚æ•°
+            String url = String.format("jdbc:mysql://%s/%s%s",
+                    serverName, dbName, parameter);
+            String username = "root";            //MySqlç”¨æˆ·å
+            String password = "";                //MySqlå¯†ç 
+            conn = DriverManager.getConnection(url, username, password); //å»ºç«‹è¿æ¥
         } catch (ClassNotFoundException | SQLException e) {
-			// ´òÓ¡Òì³£
-			// ÕÒ²»µ½MySqlÇı¶¯³ÌĞòÀà ClassNotFoundException
-			// »ñµÃÊı¾İ¿âÁ¬½Ó·¢ÉúÒì³£ SQLException
-			e.printStackTrace();
-		}
-		return conn;
+            // æ‰“å°å¼‚å¸¸
+            // æ‰¾ä¸åˆ°MySqlé©±åŠ¨ç¨‹åºç±» ClassNotFoundException
+            // è·å¾—æ•°æ®åº“è¿æ¥å‘ç”Ÿå¼‚å¸¸ SQLException
+            e.printStackTrace();
+        }
+        return conn;
     }
 
-    //¹Ø±ÕÊı¾İ¿âÁ¬½Ó
+    //å…³é—­æ•°æ®åº“è¿æ¥
     public static void closeConnection(Connection conn) {
-        if (conn != null) { //Á¬½ÓÊÇ·ñÓĞĞ§
+        if (conn != null) { //è¿æ¥æ˜¯å¦æœ‰æ•ˆ
             try {
-                if (!conn.isClosed()) { //Á¬½ÓÊÇ·ñÒÑ¹Ø±Õ
-                    conn.close(); //¹Ø±ÕÁ¬½Ó
+                if (!conn.isClosed()) { //è¿æ¥æ˜¯å¦å·²å…³é—­
+                    conn.close(); //å…³é—­è¿æ¥
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
@@ -48,15 +50,18 @@ public abstract class MySqlConnnection {
         }
     }
 
-    //²âÊÔÁ¬½ÓÀà
+    //æµ‹è¯•è¿æ¥ç±»
     public static void main(String[] args) throws Exception {
         Connection conn = MySqlConnnection.getConnection();
         String result = "";
+
         if (conn == null) {
-            result = "»ñµÃÊı¾İ¿âÁ¬½Ó´íÎó.";
+            result = "è·å¾—æ•°æ®åº“è¿æ¥é”™è¯¯";
         } else {
-            result = "Õı³£»ñµÃÊı¾İ¿âÁ¬½Ó." + conn;
+            result = "æ­£å¸¸è·å¾—æ•°æ®åº“è¿æ¥ï¼š" + conn;
         }
-        JOptionPane.showMessageDialog(null, result);
+        closeConnection(conn);
+
+        System.out.println(result);
     }
 }

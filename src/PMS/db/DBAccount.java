@@ -1,6 +1,6 @@
 package PMS.db;
 
-import PMS.bean.Account;
+import PMS.entity.Account;
 
 import javax.swing.*;
 import java.sql.Connection;
@@ -8,31 +8,33 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-// ÊµÏÖµÇÂ¼ÕË»§±í²Ù×÷
+
+// å®ç°è´¦æˆ·è¡¨çš„å¢åˆ æ”¹æŸ¥æ“ä½œ
 public abstract class DBAccount {
 
-    //Ë½ÓĞ¿Õ¹¹Ôì·½·¨,±£Ö¤±¾Àà²»ÄÜ¹»±»ÊµÀı»¯¡£
+    //ç§æœ‰ç©ºæ„é€ æ–¹æ³•,ä¿è¯æœ¬ç±»ä¸èƒ½å¤Ÿè¢«å®ä¾‹åŒ–ã€‚
     private DBAccount() {
     }
 
-    // ²éÑ¯¼ÇÂ¼
+    // æŸ¥è¯¢è®°å½•
     public static Account getAccount(String userName) {
         Connection conn = null;
-        Account account = null;
+        Account acc = null;
 
         try {
             conn = MySqlConnnection.getConnection();
+
             PreparedStatement ps = conn.prepareStatement(
                     "SELECT * FROM account WHERE accName=?");
             ps.setString(1, userName);
 
             ResultSet rs = ps.executeQuery();
             if (rs.next()) {
-                account = new Account(
-                        rs.getString(1),
-                        rs.getString(2),
-                        true
-                );
+                acc = new Account();
+                acc.setName(rs.getString(1));
+                acc.setHashedPassword(rs.getString(2), true);
+                acc.setEmpNo(rs.getString(3));
+                acc.setPrivilege(rs.getString(4));
             }
 
             ps.close();
@@ -43,11 +45,11 @@ public abstract class DBAccount {
             MySqlConnnection.closeConnection(conn);
         }
 
-        return account;
+        return acc;
     }
 
-    // Ìí¼Ó¼ÇÂ¼
-    public static boolean addAccount(Account account) {
+    // æ·»åŠ è®°å½•
+    public static boolean addAccount(Account acc) {
         Connection conn = null;
         boolean state = false;
 
@@ -55,18 +57,27 @@ public abstract class DBAccount {
             conn = MySqlConnnection.getConnection();
 
             PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO account VALUES (?,?)");
-            ps.setString(1, account.getName());
-            ps.setString(2, account.getHashedPassword());
+                    "INSERT INTO account VALUES (?,?,?,?)");
+            ps.setString(1, acc.getName());
+            ps.setString(2, acc.getHashedPassword());
+            ps.setString(3, acc.getEmpNo());
+            ps.setString(4, acc.getPrivilege());
+
             ps.executeUpdate();
-            state = true;
             ps.close();
+            state = true;
         } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "ÕËºÅÒÑ´æÔÚ£¡");
+            JOptionPane.showMessageDialog(null, "è´¦å·å·²å­˜åœ¨ï¼");
         } finally {
             MySqlConnnection.closeConnection(conn);
         }
 
         return state;
+    }
+
+    // æµ‹è¯•
+    public static void main(String[] args) {
+        Account acc = getAccount("admin");
+        System.out.println(acc);
     }
 }
