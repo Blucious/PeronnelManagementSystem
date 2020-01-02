@@ -13,16 +13,15 @@ new FormModel {
 			add( new FormContainer( "javax.swing.JTabbedPane", new FormLayoutManager( class javax.swing.JTabbedPane ) ) {
 				name: "tabbedPane"
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "center:1, center:1, 150"
+					"$columnSpecs": "center:1, center:0, center:150"
 					"$rowSpecs": "center:23, center:23, center:34"
-					"$hGap": 3
-					"$vGap": 3
-					"$alignLeft": true
-					"$alignTop": true
+					"$hGap": 8
+					"$vGap": 8
 				} ) {
 					name: "panelLogin"
 					add( new FormComponent( "javax.swing.JPasswordField" ) {
 						name: "loginPasswordFieldPassword"
+						"columns": 1
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 1
 						"gridx": 1
@@ -30,6 +29,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "loginTextFieldUserName"
+						"columns": 1
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridwidth": 2
@@ -62,22 +62,22 @@ new FormModel {
 					"background": sfield java.awt.Color lightGray
 				} )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "left:67, 0, 150, 0"
-					"$rowSpecs": "center:0, center:0, center:0, 7"
-					"$hGap": 3
-					"$vGap": 4
-					"$alignTop": true
-					"$alignLeft": true
+					"$columnSpecs": "center:67, center:0, center:150, center:0"
+					"$rowSpecs": "center:0, center:0, center:0, center:7"
+					"$hGap": 8
+					"$vGap": 8
 				} ) {
 					name: "panelRegister"
 					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "registerLabelAccount"
 						"text": "账户："
+						"horizontalTextPosition": 0
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"hAlign": 2
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
 						name: "registerTextFieldAccount"
+						"columns": 1
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridwidth": 2
@@ -91,6 +91,11 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JPasswordField" ) {
 						name: "registerPasswordFieldPassword"
+						"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"minimumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"preferredSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"cursor": new java.awt.Cursor( 2 )
+						"columns": 1
 						addEvent( new FormEvent( "java.awt.event.KeyListener", "keyReleased", "registerPasswordFieldPasswordKeyReleased", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
@@ -114,6 +119,7 @@ new FormModel {
 					} )
 					add( new FormComponent( "javax.swing.JPasswordField" ) {
 						name: "registerPasswordFieldPasswordAgain"
+						"columns": 1
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridy": 2
@@ -134,7 +140,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 70, 65 )
-			"size": new java.awt.Dimension( 365, 265 )
+			"size": new java.awt.Dimension( 365, 255 )
 		} )
 	}
 }

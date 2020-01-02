@@ -7,10 +7,10 @@ package PMS.security;
  */
 
 // 密码工具类PwdUtil，实现密码的摘要计算、和验证功能
-public class PwdUtil {
+public class PasswordUtil {
 
     //私有空构造方法,保证本类不能够被实例化。
-    private PwdUtil() {
+    private PasswordUtil() {
     }
 
     // 计算密码的数字摘要

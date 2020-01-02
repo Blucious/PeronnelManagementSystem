@@ -7,7 +7,7 @@ public class Employee {
     private String no;
     private String name;
     private Date birthday;
-    private String deptNo;
+    private String depNo;
     private String title;
     private int clockingIn;
 
@@ -16,13 +16,13 @@ public class Employee {
     public Employee(String no,
                     String name,
                     Date birthday,
-                    String deptNo,
+                    String depNo,
                     String title,
                     int clockingIn) {
         setNo(no);
         setName(name);
         setBirthday(birthday);
-        setDeptNo(deptNo);
+        setDepNo(depNo);
         setTitle(title);
         setClockingIn(clockingIn);
     }
@@ -51,12 +51,12 @@ public class Employee {
         this.birthday = birthday;
     }
 
-    public String getDeptNo() {
-        return deptNo;
+    public String getDepNo() {
+        return depNo;
     }
 
-    public void setDeptNo(String deptNo) {
-        this.deptNo = deptNo;
+    public void setDepNo(String depNo) {
+        this.depNo = depNo;
     }
 
     public String getTitle() {
@@ -73,5 +73,17 @@ public class Employee {
 
     public void setClockingIn(int clockingIn) {
         this.clockingIn = clockingIn;
+    }
+
+    @Override
+    public String toString() {
+        return "Employee{" +
+                "no='" + no + '\'' +
+                ", name='" + name + '\'' +
+                ", birthday=" + birthday +
+                ", deptNo='" + depNo + '\'' +
+                ", title='" + title + '\'' +
+                ", clockingIn=" + clockingIn +
+                '}';
     }
 }

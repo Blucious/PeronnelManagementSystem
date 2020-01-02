@@ -1,10 +1,13 @@
 package PMS.db;
 
+import PMS.db.util.MySqlUtil;
+import PMS.db.util.DBAccessUtil;
+import PMS.db.util.ResultSetHandler;
 import PMS.entity.Employee;
 
 import java.sql.*;
-import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 
 //实现员工表dep的添、删、改、查数据库操作类DBEmployee
@@ -16,163 +19,129 @@ public class DBEmployee {
     }
 
     //添加员工
-    public static void addEmployee(Employee a) {
-        Connection conn = null;
-        try {
-            //获得数据连接
-            conn = MySqlConnnection.getConnection();
+    public static boolean add(Employee e) {
+        String sql = "INSERT INTO employee "
+                + "(empNo,empName,empBirthday,empDepNo,empTitle,empClockingIn) "
+                + "VALUES (?,?,?,?,?,?)";
 
-            // 建立PreparedStatement用于执行SQL操作
-            PreparedStatement ps = conn.prepareStatement(
-                    "INSERT INTO employee VALUES (?,?,?,?,?,?)");
-
-            // 设置占位符的内容
-            ps.setString(1, a.getNo());
-            ps.setString(2, a.getName());
-            ps.setDate(3, a.getBirthday());
-            ps.setString(4, a.getDeptNo());
-            ps.setString(5, a.getTitle());
-            ps.setInt(6, a.getClockingIn());
-
-            // 执行更新操作
-            ps.executeUpdate();
-
-            // 关闭
-            ps.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MySqlConnnection.closeConnection(conn);
+        DBAccessUtil.UpdateResult ur = DBAccessUtil.updateWrapped(sql,
+                e.getNo(), e.getName(), e.getBirthday(),
+                e.getDepNo(), e.getTitle(), e.getClockingIn());
+        if (ur.exception != null) {
+            ur.exception.printStackTrace();
         }
+
+        return ur.state;
     }
 
     //删除员工
-    public static void deleteEmployee(String id) {
-        Connection conn = null;
-        try {
-            //获得数据连接
-            conn = MySqlConnnection.getConnection();
-
-            // 建立PreparedStatement用于执行SQL操作
-            PreparedStatement ps = conn.prepareStatement(
-                    "DELETE FROM employee WHERE empNo=?");
-            // 设置占位符的内容
-            ps.setString(1, id); // 设置第1个占位符的内容
-
-            // 执行更新操作
-            ps.executeUpdate();
-            ps.close(); // 关闭
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MySqlConnnection.closeConnection(conn);
+    public static boolean delete(String no) {
+        DBAccessUtil.UpdateResult ur = DBAccessUtil.updateWrapped(
+                "DELETE FROM employee WHERE empNo=?", no);
+        if (ur.exception != null) {
+            ur.exception.printStackTrace();
         }
+        return ur.state;
     }
 
-    //修改员工
-    public static void updateEmployee(Employee a) {
-        Connection conn = null;
-        try {
-            conn = MySqlConnnection.getConnection();
-
-            PreparedStatement ps = conn.prepareStatement(
-                    String.join("",
-                            "UPDATE employee ",
-                            "SET empName=?, empBirthday=?, empDeptNo=?, " +
-                                    "empTitle=?， empClockingIn=?",
-                            "WHERE empNo=?")
-            );
-            // SET子句
-            ps.setString(1, a.getName());
-            ps.setDate(2, a.getBirthday());
-            ps.setString(3, a.getDeptNo());
-            ps.setString(4, a.getTitle());
-            ps.setInt(5, a.getClockingIn());
-            // WHERE子句
-            ps.setString(6, a.getNo());
-
-            // 执行更新操作
-            ps.executeUpdate();
-            // 关闭
-            ps.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MySqlConnnection.closeConnection(conn);
+    /**
+     * 修改员工
+     */
+    public static boolean update(String no, Employee e) {
+        String sql = "UPDATE employee " +
+                "SET empNo=?, empName=?, empBirthday=?, empDepNo=?, " +
+                "empTitle=?, empClockingIn=? " +
+                "WHERE empNo=?";
+        DBAccessUtil.UpdateResult ur = DBAccessUtil.updateWrapped(sql,
+                e.getNo(), e.getName(), e.getBirthday(),
+                e.getDepNo(), e.getTitle(), e.getClockingIn(), no);
+        if (ur.exception != null) {
+            ur.exception.printStackTrace();
         }
+        return ur.state;
     }
 
     //根据员工id号查询
-    public static Employee getEmployee(String id) {
-        Employee emp = null;
-        Connection conn = null;
-        try {
-            // 获得数据连接
-            conn = MySqlConnnection.getConnection();
-
-            // 建立PreparedStatement用于执行SQL操作
-            PreparedStatement ps = conn.prepareStatement(
-                    "SELECT * FROM employee WHERE empNo=?");
-            ps.setString(1, id); // 设置第一个占位符的内容
-
-            // 执行查询，返回结果集
-            ResultSet rs = ps.executeQuery();
-            if (rs.next()) { // 因为员工id是惟一的，所以只返回一个结果既可
+    public static Employee get(String no) {
+        String sql = "SELECT * FROM employee WHERE empNo=?";
+        ResultSetHandler rsh = (ResultSet rs) -> {
+            Employee emp = null;
+            if (rs.next()) { // 因为员工no是惟一的，所以只返回一个结果既可
                 emp = new Employee();
                 emp.setNo(rs.getString(1));
                 emp.setName(rs.getString(2));
                 emp.setBirthday(rs.getDate(3));
-                emp.setDeptNo(rs.getString(4));
+                emp.setDepNo(rs.getString(4));
                 emp.setTitle(rs.getString(5));
                 emp.setClockingIn(rs.getInt(6));
             }
-            ps.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MySqlConnnection.closeConnection(conn);
+            return emp;
+        };
+
+        DBAccessUtil.QueryResult qr = DBAccessUtil.queryWrapped(sql, rsh, no);
+        if (qr.exception != null) {
+            qr.exception.printStackTrace();
         }
-        return emp;
+
+        return (Employee) qr.result;
     }
 
     //查询表中的所有记录（管理员），返回迭代器对象
-    public static Iterator getAllEmployee() {
-        List<Employee> list = new ArrayList<>();//数组列表类对象，大小可自动增加
-        Connection conn = null;
-        try {
-            conn = MySqlConnnection.getConnection();
-
-            Statement stmt = conn.createStatement(); // 建立Statement用于执行SQL操作
-            ResultSet rs = stmt.executeQuery("SELECT * FROM employee"); //执行查询，返回结果集
-            while (rs.next()) { //循环得到所有记录，并添加到数组列表中
-                Employee emp = new Employee();
-                emp.setNo(rs.getString(1));
-                emp.setName(rs.getString(2));
-                emp.setBirthday(rs.getDate(3));
-                emp.setDeptNo(rs.getString(4));
-                emp.setTitle(rs.getString(5));
-                emp.setClockingIn(rs.getInt(6));
-                list.add(emp);
+    @SuppressWarnings("unchecked cast")
+    public static Iterator<Employee> getAll() {
+        String sql = "SELECT * FROM employee";
+        ResultSetHandler rsh = (ResultSet rs) -> {
+            List<Employee> l = new LinkedList<>();
+            Employee e = null;
+            while (rs.next()) { // 因为员工no是惟一的，所以只返回一个结果既可
+                e = new Employee();
+                e.setNo(rs.getString(1));
+                e.setName(rs.getString(2));
+                e.setBirthday(rs.getDate(3));
+                e.setDepNo(rs.getString(4));
+                e.setTitle(rs.getString(5));
+                e.setClockingIn(rs.getInt(6));
+                l.add(e);
             }
-            stmt.close();
-            rs.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            MySqlConnnection.closeConnection(conn);
+            return l;
+        };
+
+        DBAccessUtil.QueryResult qr = DBAccessUtil.queryWrapped(sql, rsh);
+        if (qr.exception != null) {
+            qr.exception.printStackTrace();
         }
-        return list.iterator();//返回迭代器对象
+
+        return ((List<Employee>) qr.result).iterator();
     }
 
+    // 测试
     public static void main(String[] args) {
-        Employee admin = new Employee(
-        		"e310", "张三", Date.valueOf("1998-5-4"),
-				"1001", "员工", 2);
-        DBEmployee.addEmployee(admin);
+        System.out.println("查询全部：");
+        for (Iterator it = getAll(); it.hasNext(); ) {
+            Employee e = (Employee) it.next();
+            System.out.println(e);
+        }
 
-        for (Iterator it = DBEmployee.getAllEmployee(); it.hasNext(); ) {
-            Employee a1 = (Employee) it.next();
-            System.out.println(a1.getNo() + "\t" + a1.getName());
+        Employee newEmp = new Employee(
+                "e310", "张三", Date.valueOf("1998-5-4"),
+                "1001", "员工", 2);
+
+        System.out.println("增加+查询：");
+        add(newEmp);
+        System.out.println(get("e310"));
+
+        System.out.println("修改+查询：");
+        update("e310", new Employee(
+                        "e310", "李四", Date.valueOf("1998-5-4"),
+                        "1001", "员工", 2));
+        System.out.println(get("e310"));
+
+        System.out.println("删除+查询全部：");
+        delete("e310");
+
+        for (Iterator it = getAll(); it.hasNext(); ) {
+            Employee e = (Employee) it.next();
+            System.out.println(e);
         }
     }
 

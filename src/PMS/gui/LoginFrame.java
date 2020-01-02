@@ -2,7 +2,7 @@
  * Created by JFormDesigner on Mon Dec 30 11:11:14 CST 2019
  */
 
-package PMS;
+package PMS.gui;
 
 
 import java.awt.*;
@@ -11,9 +11,8 @@ import java.util.Arrays;
 import javax.swing.*;
 
 import PMS.entity.Account;
-import PMS.security.PwdUtil;
+import PMS.security.PasswordUtil;
 import PMS.db.DBAccount;
-import PMS.op.OPAccount;
 
 /**
  * @author unknown
@@ -28,20 +27,22 @@ public class LoginFrame extends JFrame {
         char[] userPassword = loginPasswordFieldPassword.getPassword();
 
         // 查询输入的用户名对应的账户
-        Account account = DBAccount.getAccount(userName);
+        Account account = DBAccount.get(userName);
 
         // 比较数字摘要
         if (account != null &&
-                PwdUtil.checkPwd(userPassword, account.getHashedPassword())) {
-            JOptionPane.showMessageDialog(
-                    this, "登录成功");
+                PasswordUtil.checkPwd(userPassword, account.getHashedPassword())) {
+            // 启动主窗口
+            MainFrame mainFrame = new MainFrame();
+            mainFrame.setVisible(true);
+            // 关闭自身
+            this.dispose();
         } else {
             JOptionPane.showMessageDialog(
                     this, "账户或密码错误");
         }
 
     }
-
 
     private void registerButtonRegisterMouseReleased(MouseEvent e) {
         String userName = registerTextFieldAccount.getText();
@@ -53,11 +54,11 @@ public class LoginFrame extends JFrame {
             // 两次输入的密码必须相同
             if (Arrays.equals(userPassword, userPasswordAgain)) {
                 // 密码评估必须大于50分
-                PwdUtil.EvaluationResult er = PwdUtil.evaluatePwd(userPassword);
+                PasswordUtil.EvaluationResult er = PasswordUtil.evaluatePwd(userPassword);
                 if (er.score >= 50) {
                     // 添加新用户
                     Account account = new Account(userName, new String(userPassword), false);
-                    boolean state = DBAccount.addAccount(account);
+                    boolean state = DBAccount.add(account);
 
                     // 判断是否添加成功，有可能因为账户存在而添加失败
                     if (state) {
@@ -82,7 +83,7 @@ public class LoginFrame extends JFrame {
 
     private void registerPasswordFieldPasswordKeyReleased(KeyEvent e) {
         char[] userPassword = registerPasswordFieldPassword.getPassword();
-        PwdUtil.EvaluationResult er = PwdUtil.evaluatePwd(userPassword);
+        PasswordUtil.EvaluationResult er = PasswordUtil.evaluatePwd(userPassword);
         registerLabelEvalution.setText(er.toString());
     }
 
@@ -118,36 +119,40 @@ public class LoginFrame extends JFrame {
 
             //======== panelLogin ========
             {
-                panelLogin.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new
-                javax. swing. border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax
-                . swing. border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM, new java
-                .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,12 ), java. awt
-                . Color. red) ,panelLogin. getBorder( )) ); panelLogin. addPropertyChangeListener (new java. beans.
-                PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062ord\u0065r" .
-                equals (e .getPropertyName () )) throw new RuntimeException( ); }} );
+                panelLogin.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax .
+                swing. border .EmptyBorder ( 0, 0 ,0 , 0) ,  "JFor\u006dDesi\u0067ner \u0045valu\u0061tion" , javax. swing .border
+                . TitledBorder. CENTER ,javax . swing. border .TitledBorder . BOTTOM, new java. awt .Font ( "Dia\u006cog"
+                , java .awt . Font. BOLD ,12 ) ,java . awt. Color .red ) ,panelLogin. getBorder
+                () ) ); panelLogin. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override public void propertyChange (java
+                . beans. PropertyChangeEvent e) { if( "bord\u0065r" .equals ( e. getPropertyName () ) )throw new RuntimeException
+                ( ) ;} } );
                 panelLogin.setLayout(new GridBagLayout());
-                ((GridBagLayout)panelLogin.getLayout()).columnWidths = new int[] {4, 4, 150, 0};
-                ((GridBagLayout)panelLogin.getLayout()).rowHeights = new int[] {26, 26, 34, 0};
-                ((GridBagLayout)panelLogin.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
-                ((GridBagLayout)panelLogin.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 1.0E-4};
+                ((GridBagLayout)panelLogin.getLayout()).columnWidths = new int[] {9, 0, 150};
+                ((GridBagLayout)panelLogin.getLayout()).rowHeights = new int[] {31, 31, 34};
+
+                //---- loginPasswordFieldPassword ----
+                loginPasswordFieldPassword.setColumns(1);
                 panelLogin.add(loginPasswordFieldPassword, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 0, 3, 0), 0, 0));
+                    new Insets(0, 0, 8, 0), 0, 0));
+
+                //---- loginTextFieldUserName ----
+                loginTextFieldUserName.setColumns(1);
                 panelLogin.add(loginTextFieldUserName, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 0, 3, 0), 0, 0));
+                    new Insets(0, 0, 8, 0), 0, 0));
 
                 //---- loginLabelAccount ----
                 loginLabelAccount.setText("\u8d26\u6237\uff1a");
                 panelLogin.add(loginLabelAccount, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.NONE,
-                    new Insets(0, 0, 3, 3), 0, 0));
+                    new Insets(0, 0, 8, 8), 0, 0));
 
                 //---- loginLabelPassword ----
                 loginLabelPassword.setText("\u5bc6\u7801\uff1a");
                 panelLogin.add(loginLabelPassword, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.NONE,
-                    new Insets(0, 0, 3, 3), 0, 0));
+                    new Insets(0, 0, 8, 8), 0, 0));
 
                 //---- loginButtonLogin ----
                 loginButtonLogin.setText("\u767b\u5f55");
@@ -167,27 +172,34 @@ public class LoginFrame extends JFrame {
             //======== panelRegister ========
             {
                 panelRegister.setLayout(new GridBagLayout());
-                ((GridBagLayout)panelRegister.getLayout()).columnWidths = new int[] {70, 0, 153, 0, 0};
-                ((GridBagLayout)panelRegister.getLayout()).rowHeights = new int[] {0, 0, 0, 7, 0};
-                ((GridBagLayout)panelRegister.getLayout()).columnWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0E-4};
-                ((GridBagLayout)panelRegister.getLayout()).rowWeights = new double[] {0.0, 0.0, 0.0, 0.0, 1.0E-4};
+                ((GridBagLayout)panelRegister.getLayout()).columnWidths = new int[] {75, 0, 158, 0};
+                ((GridBagLayout)panelRegister.getLayout()).rowHeights = new int[] {0, 0, 0, 7};
 
                 //---- registerLabelAccount ----
                 registerLabelAccount.setText("\u8d26\u6237\uff1a");
+                registerLabelAccount.setHorizontalTextPosition(SwingConstants.CENTER);
                 panelRegister.add(registerLabelAccount, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.NONE,
-                    new Insets(0, 0, 4, 3), 0, 0));
+                    new Insets(0, 0, 8, 8), 0, 0));
+
+                //---- registerTextFieldAccount ----
+                registerTextFieldAccount.setColumns(1);
                 panelRegister.add(registerTextFieldAccount, new GridBagConstraints(1, 0, 2, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 0, 4, 3), 0, 0));
+                    new Insets(0, 0, 8, 8), 0, 0));
 
                 //---- registerLabelPassword ----
                 registerLabelPassword.setText("\u5bc6\u7801\uff1a");
                 panelRegister.add(registerLabelPassword, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.NONE,
-                    new Insets(0, 0, 4, 3), 0, 0));
+                    new Insets(0, 0, 8, 8), 0, 0));
 
                 //---- registerPasswordFieldPassword ----
+                registerPasswordFieldPassword.setMaximumSize(null);
+                registerPasswordFieldPassword.setMinimumSize(null);
+                registerPasswordFieldPassword.setPreferredSize(null);
+                registerPasswordFieldPassword.setCursor(Cursor.getPredefinedCursor(Cursor.TEXT_CURSOR));
+                registerPasswordFieldPassword.setColumns(1);
                 registerPasswordFieldPassword.addKeyListener(new KeyAdapter() {
                     @Override
                     public void keyReleased(KeyEvent e) {
@@ -196,23 +208,26 @@ public class LoginFrame extends JFrame {
                 });
                 panelRegister.add(registerPasswordFieldPassword, new GridBagConstraints(1, 1, 2, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 0, 4, 3), 0, 0));
+                    new Insets(0, 0, 8, 8), 0, 0));
 
                 //---- registerLabelEvalution ----
                 registerLabelEvalution.setText("/");
                 panelRegister.add(registerLabelEvalution, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 0, 4, 0), 0, 0));
+                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(0, 0, 8, 0), 0, 0));
 
                 //---- registerLabelPasswordAgain ----
                 registerLabelPasswordAgain.setText("\u786e\u8ba4\u5bc6\u7801\uff1a");
                 registerLabelPasswordAgain.setMinimumSize(new Dimension(60, 17));
                 panelRegister.add(registerLabelPasswordAgain, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.NONE,
-                    new Insets(0, 0, 4, 3), 0, 0));
+                    new Insets(0, 0, 8, 8), 0, 0));
+
+                //---- registerPasswordFieldPasswordAgain ----
+                registerPasswordFieldPasswordAgain.setColumns(1);
                 panelRegister.add(registerPasswordFieldPasswordAgain, new GridBagConstraints(1, 2, 2, 1, 0.0, 0.0,
                     GridBagConstraints.CENTER, GridBagConstraints.HORIZONTAL,
-                    new Insets(0, 0, 4, 3), 0, 0));
+                    new Insets(0, 0, 8, 8), 0, 0));
 
                 //---- registerButtonRegister ----
                 registerButtonRegister.setText("\u6ce8\u518c");
@@ -223,13 +238,13 @@ public class LoginFrame extends JFrame {
                     }
                 });
                 panelRegister.add(registerButtonRegister, new GridBagConstraints(0, 3, 3, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.VERTICAL,
-                    new Insets(0, 0, 0, 3), 0, 0));
+                    GridBagConstraints.CENTER, GridBagConstraints.NONE,
+                    new Insets(0, 0, 0, 8), 0, 0));
             }
             tabbedPane.addTab("\u6ce8\u518c", panelRegister);
         }
         contentPane.add(tabbedPane);
-        setSize(365, 265);
+        setSize(365, 255);
         setLocationRelativeTo(null);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }

@@ -2,7 +2,7 @@ package PMS.db;
 
 import PMS.db.util.DBAccessUtil;
 import PMS.db.util.ResultSetHandler;
-import PMS.entity.Account;
+import PMS.entity.Title;
 
 import java.sql.ResultSet;
 import java.util.Iterator;
@@ -11,25 +11,22 @@ import java.util.List;
 
 
 // 实现账户表的增删改查操作
-public final class DBAccount {
+public final class DBTitle {
 
     //私有空构造方法,保证本类不能够被实例化。
-    private DBAccount() {
+    private DBTitle() {
     }
 
     // 添加
-    public static boolean add(Account acc) {
+    public static boolean add(Title tit) {
         // 查询语句
-        String sql = "INSERT INTO account " +
-                "(accName,accHashedPassword,accEmpNo,accPrivilege) " +
-                "VALUES (?,?,?,?)";
+        String sql = "INSERT INTO title " +
+                "(titName) " +
+                "VALUES (?)";
         // 执行查询
         DBAccessUtil.UpdateResult ur =
                 DBAccessUtil.updateWrapped(sql,
-                        acc.getName(),
-                        acc.getHashedPassword(),
-                        acc.getEmpNo(),
-                        acc.getPrivilege());
+                        tit.getName());
         // 异常处理
         if (ur.exception != null) {
             // JDBC 异常处理
@@ -53,7 +50,7 @@ public final class DBAccount {
      * @return
      */
     public static boolean delete(String name) {
-        String sql = "DELETE FROM account WHERE accName=?";
+        String sql = "DELETE FROM title WHERE titName=?";
         DBAccessUtil.UpdateResult ur =
                 DBAccessUtil.updateWrapped(sql, name);
         if (ur.exception != null) {
@@ -66,15 +63,13 @@ public final class DBAccount {
     /**
      * 通过账户名修改
      */
-    public static boolean update(String name, Account acc) {
-        String sql = "UPDATE account " +
-                "SET accName=?, accHashedPassword=?, " +
-                "accEmpNo=?, accPrivilege=? " +
-                "WHERE accName=?";
+    public static boolean update(String name, Title tit) {
+        String sql = "UPDATE title " +
+                "SET titName=? " +
+                "WHERE titName=?";
         DBAccessUtil.UpdateResult ur =
                 DBAccessUtil.updateWrapped(sql,
-                        acc.getName(), acc.getHashedPassword(),
-                        acc.getEmpNo(), acc.getPrivilege(), name);
+                        tit.getName(), name);
         if (ur.exception != null) {
             ur.exception.printStackTrace();
         }
@@ -88,20 +83,17 @@ public final class DBAccount {
      * @param name
      * @return
      */
-    public static Account get(String name) {
+    public static Title get(String name) {
         // 查询语句
-        String sql = "SELECT * FROM account WHERE accName=?";
+        String sql = "SELECT * FROM title WHERE titName=?";
         // 创建结果集处理函数
         ResultSetHandler rsh = (ResultSet rs) -> {
-            Account a = null;
+            Title t = null;
             if (rs.next()) {
-                a = new Account();
-                a.setName(rs.getString(1));
-                a.setHashedPassword(rs.getString(2), true);
-                a.setEmpNo(rs.getString(3));
-                a.setPrivilege(rs.getString(4));
+                t = new Title();
+                t.setName(rs.getString(1));
             }
-            return a;
+            return t;
         };
         // 执行查询
         DBAccessUtil.QueryResult qr =
@@ -111,32 +103,30 @@ public final class DBAccount {
             qr.exception.printStackTrace();
         }
         // 返回查询结果
-        return (Account) qr.result;
+        return (Title) qr.result;
     }
 
     @SuppressWarnings("unchecked cast")
-    public static Iterator<Account> getAll() {
-        String sql = "SELECT * FROM account";
+    public static Iterator<Title> getAll() {
+        String sql = "SELECT * FROM title";
         ResultSetHandler rsh = (ResultSet rs) -> {
-            List<Account> l = new LinkedList<>();
-            Account a = null;
-            while (rs.next()) { // 因为账户名是唯一的，所以只返回一个结果既可
-                a = new Account();
-                a.setName(rs.getString(1));
-                a.setHashedPassword(rs.getString(2), true);
-                a.setEmpNo(rs.getString(3));
-                a.setPrivilege(rs.getString(4));
-                l.add(a);
+            List<Title> l = new LinkedList<>();
+            Title t = null;
+            while (rs.next()) {
+                t = new Title();
+                t.setName(rs.getString(1));
+                l.add(t);
             }
             return l;
         };
 
-        DBAccessUtil.QueryResult qr = DBAccessUtil.queryWrapped(sql, rsh);
+        DBAccessUtil.QueryResult qr =
+                DBAccessUtil.queryWrapped(sql, rsh);
         if (qr.exception != null) {
             qr.exception.printStackTrace();
         }
 
-        return ((List<Account>) qr.result).iterator();
+        return ((List<Title>) qr.result).iterator();
     }
 
 
@@ -144,30 +134,27 @@ public final class DBAccount {
     public static void main(String[] args) {
         System.out.println("查询全部：");
         for (Iterator it = getAll(); it.hasNext(); ) {
-            Account a = (Account) it.next();
-            System.out.println(a);
+            Title t = (Title) it.next();
+            System.out.println(t);
         }
 
-        Account newAcc =
-                new Account("testAccount",
-                        "123", false);
+        Title newTit =
+                new Title("测试职位");
 
         System.out.println("增加+查询：");
-        add(newAcc);
-        System.out.println(get("testAccount"));
+        add(newTit);
+        System.out.println(get("测试职位"));
 
         System.out.println("修改+查询：");
-        update("testAccount",
-                new Account("testAccount",
-                        "233", false));
-        System.out.println(get("testAccount"));
+        update("测试职位",  new Title("测试职位2"));
+        System.out.println(get("测试职位2"));
 
         System.out.println("删除+查询全部：");
-        delete("testAccount");
+        delete("测试职位2");
 
         for (Iterator it = getAll(); it.hasNext(); ) {
-            Account a = (Account) it.next();
-            System.out.println(a);
+            Title t = (Title) it.next();
+            System.out.println(t);
         }
     }
 }

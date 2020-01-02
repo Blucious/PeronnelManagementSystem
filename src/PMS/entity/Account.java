@@ -1,6 +1,6 @@
 package PMS.entity;
 
-import PMS.security.PwdUtil;
+import PMS.security.PasswordUtil;
 
 // 人事管理系统账号类
 //
@@ -22,7 +22,8 @@ public class Account {
     public Account(
             String name,
             String password, boolean passwordIsHashed) {
-        this(name, password, passwordIsHashed, null, DEFAULT_RPIVILEGE);
+        this(name, password, passwordIsHashed,
+                null, DEFAULT_RPIVILEGE); // 设置默认权限
     }
 
     public Account(
@@ -47,7 +48,7 @@ public class Account {
 
     public void setHashedPassword(String password, boolean isHashed) {
         if (!isHashed) // 如果密码为明文，则转换成摘要
-            password = PwdUtil.hashPwd(password);
+            password = PasswordUtil.hashPwd(password);
         this.hashedPassword = password;
     }
 

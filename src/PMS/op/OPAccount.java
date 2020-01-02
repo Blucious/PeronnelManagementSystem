@@ -2,7 +2,7 @@ package PMS.op;
 
 import PMS.db.DBAccount;
 import PMS.entity.Account;
-import PMS.security.PwdUtil;
+import PMS.security.PasswordUtil;
 
 
 public abstract class OPAccount {
@@ -10,7 +10,7 @@ public abstract class OPAccount {
 
     public static class LoginResult {
         boolean state; // 登录成功true，否则false
-        String message;
+        String message; // 提示信息
 
         public LoginResult() {
         }
@@ -27,11 +27,11 @@ public abstract class OPAccount {
         LoginResult lr = new LoginResult();
 
         // 查询输入的用户名对应的账户
-        Account account = DBAccount.getAccount(name);
+        Account account = DBAccount.get(name);
 
         // 比较数字摘要
         if (account != null &&
-                PwdUtil.checkPwd(password, account.getHashedPassword())) {
+                PasswordUtil.checkPwd(password, account.getHashedPassword())) {
             lr.state = true;
             lr.message = "登录成功";
         } else {

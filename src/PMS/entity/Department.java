@@ -4,6 +4,9 @@ public class Department {
     private String no;
     private String name;
 
+    public Department() {
+    }
+
     public Department(String no, String name) {
         setNo(no);
         setName(name);
@@ -23,5 +26,13 @@ public class Department {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public String toString() {
+        return "Department{" +
+                "no='" + no + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 }
