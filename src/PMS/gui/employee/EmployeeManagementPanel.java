@@ -7,22 +7,36 @@ package PMS.gui.employee;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
-import javax.swing.table.*;
 
+import PMS.db.DBEmployee;
 import PMS.entity.Employee;
+import PMS.gui.com.DataInputDialog;
+import PMS.gui.model.TableModel;
 
 /**
  * @author c
  */
-public class DepartmentManagementPanel extends JPanel {
-    public DepartmentManagementPanel() {
+public class EmployeeManagementPanel extends JPanel {
+    // 表数据模型
+    private TableModel tableModelEmployee;
+
+    public EmployeeManagementPanel() {
         initComponents();
+
+        tableModelEmployee = new TableModel("select * from employee");
+        tableEmployee.setModel(tableModelEmployee);
     }
 
     private void button1MouseReleased(MouseEvent e) {
-        AddingEmployeeDialog dialog = new AddingEmployeeDialog(null);
+        DataInputDialog dialog = new AddingEmployeeDialog(null);
         dialog.setVisible(true);
         dialog.dispose();
+
+        Employee emp = (Employee)dialog.getInputData();
+        if (emp != null) {
+            DBEmployee.add(emp);
+            tableModelEmployee.setQuery("select * from employee");
+        }
     }
 
     private void initComponents() {
@@ -38,12 +52,12 @@ public class DepartmentManagementPanel extends JPanel {
         tableEmployee = new JTable();
 
         //======== this ========
-        setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border. EmptyBorder
-        ( 0, 0, 0, 0) , "JF\u006frmDesi\u0067ner Ev\u0061luatio\u006e", javax. swing. border. TitledBorder. CENTER, javax. swing. border
-        . TitledBorder. BOTTOM, new java .awt .Font ("Dialo\u0067" ,java .awt .Font .BOLD ,12 ), java. awt
-        . Color. red) , getBorder( )) );  addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override public void
-        propertyChange (java .beans .PropertyChangeEvent e) {if ("borde\u0072" .equals (e .getPropertyName () )) throw new RuntimeException( )
-        ; }} );
+        setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax . swing. border .EmptyBorder
+        ( 0, 0 ,0 , 0) ,  "JFor\u006dDesi\u0067ner \u0045valu\u0061tion" , javax. swing .border . TitledBorder. CENTER ,javax . swing. border
+        .TitledBorder . BOTTOM, new java. awt .Font ( "Dia\u006cog", java .awt . Font. BOLD ,12 ) ,java . awt
+        . Color .red ) , getBorder () ) );  addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override public void
+        propertyChange (java . beans. PropertyChangeEvent e) { if( "bord\u0065r" .equals ( e. getPropertyName () ) )throw new RuntimeException( )
+        ;} } );
         setLayout(new BorderLayout());
 
         //======== panel1 ========
@@ -52,7 +66,7 @@ public class DepartmentManagementPanel extends JPanel {
 
             //======== panel2 ========
             {
-                panel2.setMaximumSize(new Dimension(242, 44));
+                panel2.setMaximumSize(null);
                 panel2.setLayout(new GridBagLayout());
                 ((GridBagLayout)panel2.getLayout()).columnWidths = new int[] {10, 0, 0, 0, 0};
                 ((GridBagLayout)panel2.getLayout()).rowHeights = new int[] {10, 0, 5, 0};
@@ -95,15 +109,6 @@ public class DepartmentManagementPanel extends JPanel {
                     scrollPane.setPreferredSize(null);
 
                     //---- tableEmployee ----
-                    tableEmployee.setModel(new DefaultTableModel(
-                        new Object[][] {
-                            {"test", null, "\u6d4b\u8bd5"},
-                            {null, "test", null},
-                        },
-                        new String[] {
-                            null, null, null
-                        }
-                    ));
                     tableEmployee.setMaximumSize(null);
                     scrollPane.setViewportView(tableEmployee);
                 }

@@ -4,7 +4,10 @@
 
 package PMS.gui;
 
-import PMS.gui.employee.DepartmentManagementPanel;
+import PMS.entity.Account;
+import PMS.gui.employee.EmployeeManagementPanel;
+
+import PMS.db.DBAccount;
 
 import java.awt.*;
 import java.awt.event.*;
@@ -14,15 +17,25 @@ import javax.swing.*;
  * @author c
  */
 public class MainFrame extends JFrame {
-    public MainFrame() {
+    // 登录该窗口的账号
+    private Account loginAccount;
+    // 子面板
+    private JPanel panelEmployeeManagement;
+
+
+    public MainFrame(Account loginAccount) {
+
         initComponents();
 
-        // 初始化
-        panelEmployeeManagement = new DepartmentManagementPanel();
+        // 自定义初始化
+
+        // 设置该窗口对应的账号
+        this.loginAccount = loginAccount;
+        // 添加面板
+        panelEmployeeManagement = new EmployeeManagementPanel();
         tabbedPane.addTab("员工管理", panelEmployeeManagement);
     }
 
-    private JPanel panelEmployeeManagement;
 
     private void thisWindowClosing(WindowEvent e) {
         // 弹出对话框确认关闭行为
@@ -30,14 +43,12 @@ public class MainFrame extends JFrame {
                 this, "是否确认关闭？","提示",
                 JOptionPane.OK_CANCEL_OPTION);
 
-//        System.out.println(optionValue); // 调试
         // 如果点击确定则结束程序，否则什么都不做
         if (optionValue == JOptionPane.OK_OPTION) {
             this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         } else {
             this.setDefaultCloseOperation(JFrame.DO_NOTHING_ON_CLOSE);
         }
-
     }
 
     private void initComponents() {
@@ -124,7 +135,9 @@ public class MainFrame extends JFrame {
 
     // 测试
     public static void main(String[] args) {
-        MainFrame mainFrame = new MainFrame();
+        // 用admin账号进行测试
+        Account accAdmin = DBAccount.get("admin");
+        MainFrame mainFrame = new MainFrame(accAdmin);
         mainFrame.setVisible(true);
     }
 }

@@ -1,10 +1,14 @@
 package PMS.db;
 
 import PMS.db.util.DBAccessUtil;
+import PMS.db.util.MySqlUtil;
 import PMS.db.util.ResultSetHandler;
 import PMS.entity.Account;
 
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
@@ -141,7 +145,7 @@ public final class DBAccount {
 
 
     // 测试
-    public static void main(String[] args) {
+    public static void main(String[] args) throws SQLException {
         System.out.println("查询全部：");
         for (Iterator it = getAll(); it.hasNext(); ) {
             Account a = (Account) it.next();
@@ -169,5 +173,13 @@ public final class DBAccount {
             Account a = (Account) it.next();
             System.out.println(a);
         }
+
+        Statement stmt =
+                MySqlUtil.createStatement();
+        ResultSet rs = stmt.executeQuery("SELECT * FROM account");
+        rs.last();
+        System.out.println(rs.getRow());
+        System.out.println(rs.getMetaData());
+        System.out.println(rs.getMetaData().getColumnCount());
     }
 }

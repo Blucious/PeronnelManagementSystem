@@ -12,13 +12,13 @@ new FormModel {
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
 					"$columnSpecs": "5, 0, 0, 0"
 					"$rowSpecs": "5, 0, 5"
-					"$alignTop": true
 					"$hGap": 5
 					"$vGap": 5
 					"$alignLeft": true
+					"$alignTop": true
 				} ) {
 					name: "panel2"
-					"maximumSize": new java.awt.Dimension( 242, 44 )
+					"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonAdd"
 						"text": "添加"
@@ -52,35 +52,10 @@ new FormModel {
 						"preferredSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
 						add( new FormComponent( "javax.swing.JTable" ) {
 							name: "tableEmployee"
-							"model": new com.jformdesigner.model.SwingTableModel( new java.util.Vector {
-								add( new java.util.Vector {
-									add( "test" )
-									add( null )
-									add( "测试" )
-								} )
-								add( new java.util.Vector {
-									add( null )
-									add( "test" )
-									add( null )
-								} )
-							}, new java.util.Vector {
-								add( null )
-								add( null )
-								add( null )
-							}, new java.util.Vector {
-								add( null )
-								add( null )
-								add( null )
-							}, new java.util.Vector {
-								add( null )
-								add( null )
-								add( null )
-							}, new java.util.Vector {
-								add( null )
-								add( null )
-								add( null )
-							} )
 							"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
+							auxiliary() {
+								"model.noCode": true
+							}
 						} )
 					} )
 				} )

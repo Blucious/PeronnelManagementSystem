@@ -84,15 +84,8 @@ public abstract class MySqlUtil {
         closeSpecConnection(conn);
     }
 
-    public static ResultSet executeQuery(String sql) throws SQLException {
-        ResultSet rs = null;
-
-        Statement stmt = conn.createStatement();
-        rs = stmt.executeQuery(sql);
-
-        stmt.close();
-
-        return rs;
+    public static Statement createStatement() throws SQLException {
+        return conn.createStatement();
     }
 
     public static PreparedStatement prepareStatement(String sql) throws SQLException {

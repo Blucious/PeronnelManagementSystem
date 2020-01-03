@@ -33,7 +33,7 @@ public class LoginFrame extends JFrame {
         if (account != null &&
                 PasswordUtil.checkPwd(userPassword, account.getHashedPassword())) {
             // 启动主窗口
-            MainFrame mainFrame = new MainFrame();
+            MainFrame mainFrame = new MainFrame(account);
             mainFrame.setVisible(true);
             // 关闭自身
             this.dispose();

@@ -1,6 +1,5 @@
 package PMS.db;
 
-import PMS.db.util.MySqlUtil;
 import PMS.db.util.DBAccessUtil;
 import PMS.db.util.ResultSetHandler;
 import PMS.entity.Employee;
