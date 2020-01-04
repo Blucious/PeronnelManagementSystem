@@ -3,6 +3,7 @@ package PMS.gui.com;
 import javax.swing.*;
 import java.awt.*;
 
+// 子类继承该类，用该类的方法，配合外部类，实现数据通信功能
 public class DataInputDialog extends JDialog {
 
     // 数据存放属性，对子类也进行屏蔽，子类只能通过getInputData和setInputData访问

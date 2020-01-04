@@ -16,7 +16,7 @@ public abstract class MySqlUtil {
     // 数据库名称
     private static final String DATABASE_NAME = "newpms";
     // 数据库连接参数
-    private static final String PARAMETERS = "?useUnicode=true&characterEncoding=UTF-8";
+    private static final String PARAMETERS = "?useUnicode=true&characterEncoding=UTF-8&useSSL=true";
     // 数据库链接地址
     private static final String URL =
             String.format("jdbc:mysql://%s/%s%s",

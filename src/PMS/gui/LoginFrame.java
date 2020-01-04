@@ -11,8 +11,10 @@ import java.util.Arrays;
 import javax.swing.*;
 
 import PMS.entity.Account;
+import PMS.gui.admin.AdminManagementDialog;
 import PMS.security.PasswordUtil;
 import PMS.db.DBAccount;
+import PMS.op.OPAccount;
 
 /**
  * @author unknown
@@ -26,20 +28,23 @@ public class LoginFrame extends JFrame {
         String userName = loginTextFieldUserName.getText();
         char[] userPassword = loginPasswordFieldPassword.getPassword();
 
-        // 查询输入的用户名对应的账户
-        Account account = DBAccount.get(userName);
+        Account account = OPAccount.loginVerify(userName, userPassword);
 
-        // 比较数字摘要
-        if (account != null &&
-                PasswordUtil.checkPwd(userPassword, account.getHashedPassword())) {
-            // 启动主窗口
-            MainFrame mainFrame = new MainFrame(account);
-            mainFrame.setVisible(true);
+        if (account != null) {
+            if(account.isAdmin()){
+                // 启动管理员专有窗口
+                AdminManagementDialog d = new AdminManagementDialog(null, account);
+                d.setVisible(true);
+            }else {
+                // 启动主窗口
+                MainFrame f = new MainFrame(account);
+                f.setVisible(true);
+            }
             // 关闭自身
             this.dispose();
         } else {
             JOptionPane.showMessageDialog(
-                    this, "账户或密码错误");
+                    this, "账户或密码错误", "登录失败", JOptionPane.ERROR_MESSAGE);
         }
 
     }
@@ -49,36 +54,13 @@ public class LoginFrame extends JFrame {
         char[] userPassword = registerPasswordFieldPassword.getPassword();
         char[] userPasswordAgain = registerPasswordFieldPasswordAgain.getPassword();
 
-        // 账户名不允许为空
-        if (userName.length() > 0) {
-            // 两次输入的密码必须相同
-            if (Arrays.equals(userPassword, userPasswordAgain)) {
-                // 密码评估必须大于50分
-                PasswordUtil.EvaluationResult er = PasswordUtil.evaluatePwd(userPassword);
-                if (er.score >= 50) {
-                    // 添加新用户
-                    Account account = new Account(userName, new String(userPassword), false);
-                    boolean state = DBAccount.add(account);
+        OPAccount.Result r = OPAccount.register(userName, userPassword, userPasswordAgain);
 
-                    // 判断是否添加成功，有可能因为账户存在而添加失败
-                    if (state) {
-                        JOptionPane.showMessageDialog(
-                                this, "注册成功");
-                        // 重置密码评估信息
-                        registerLabelEvalution.setText("/");
-                    }
-                } else {
-                    JOptionPane.showMessageDialog(
-                            this, "密码强度未达到标准");
-                }
-            } else {
-                JOptionPane.showMessageDialog(
-                        this, "两次输入的密码不同");
-            }
-        } else {
-            JOptionPane.showMessageDialog(
-                    this, "账户名不允许为空");
+        if (r.state) {
+            // 重置密码评估信息
+            registerLabelEvalution.setText("/");
         }
+        JOptionPane.showMessageDialog(this, r.message);
     }
 
     private void registerPasswordFieldPasswordKeyReleased(KeyEvent e) {

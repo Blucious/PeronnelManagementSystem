@@ -5,7 +5,7 @@ import java.sql.SQLException;
 
 /**
  * 结果集处理接口
- * 用于在执行查询时设置结构集
+ * 用于在执行查询时将结果集转换为想要的对象
  */
 public interface ResultSetHandler {
     public Object doHandler(ResultSet rs) throws SQLException;

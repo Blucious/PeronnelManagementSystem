@@ -3,14 +3,14 @@ JFDML JFormDesigner: "7.0.0.6.255" Java: "11.0.4" encoding: "UTF-8"
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
-		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) ) {
 			name: "this"
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
 				"axis": 1
 			} ) {
 				name: "panel1"
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "5, 0, 0, 0"
+					"$columnSpecs": "5, 0, 0, 0, 0, 115"
 					"$rowSpecs": "5, 0, 5"
 					"$hGap": 5
 					"$vGap": 5
@@ -30,6 +30,7 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonModify"
 						"text": "修改"
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "buttonModifyMouseReleased", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
 						"gridy": 1
@@ -37,30 +38,25 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonDelete"
 						"text": "删除"
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "buttonDeleteMouseReleased", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 3
 						"gridy": 1
 					} )
 				} )
-				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
-					"axis": 1
-				} ) {
-					name: "panel3"
-					add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
-						name: "scrollPane"
+				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+					name: "scrollPane"
+					"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
+					"preferredSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
+					add( new FormComponent( "javax.swing.JTable" ) {
+						name: "tableEmployee"
 						"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
-						"preferredSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
-						add( new FormComponent( "javax.swing.JTable" ) {
-							name: "tableEmployee"
-							"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
-							auxiliary() {
-								"model.noCode": true
-							}
-						} )
+						auxiliary() {
+							"model.noCode": true
+						}
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "tableEmployeeMouseReleased", true ) )
 					} )
 				} )
-			}, new FormLayoutConstraints( class java.lang.String ) {
-				"value": "Center"
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )

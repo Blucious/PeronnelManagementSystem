@@ -140,7 +140,7 @@ public class PasswordUtil {
         return er;
     }
 
-    // PwdUtil测试
+    // 测试
     public static void main(String[] args) {
         String a = hashPwd("admin");
         boolean r = BCrypt.checkpw("admin", a);
@@ -149,5 +149,7 @@ public class PasswordUtil {
 
         System.out.println(a);
         System.out.println(r);
+
+        System.out.println(hashPwd("test"));
     }
 }

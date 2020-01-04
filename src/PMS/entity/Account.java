@@ -8,8 +8,14 @@ import PMS.security.PasswordUtil;
 //    但是无法完全保证，该类的使用者需传递正确的参数
 // 此外，该类不进行数据正确性验证
 public class Account {
-    // 默认值
-    private final static String DEFAULT_RPIVILEGE = "员工"; // 默认权限
+
+    // 权限值
+    private final static String PRIVILEGE_ADMIN = "管理员"; // 管理员权限
+    private final static String PRIVILEGE_PERSONNEL_STAFF = "人事员工"; // 人事员工权限
+    private final static String PRIVILEGE_NORMAL_STAFF = "普通员工"; // 普通员工权限
+
+    private final static String PRIVILEGE_DEFAULT = PRIVILEGE_NORMAL_STAFF; // 默认权限
+
 
     // 实例属性
     private String name;
@@ -17,13 +23,14 @@ public class Account {
     private String empNo;
     private String privilege;
 
-    public Account() {}
+    public Account() {
+    }
 
     public Account(
             String name,
             String password, boolean passwordIsHashed) {
         this(name, password, passwordIsHashed,
-                null, DEFAULT_RPIVILEGE); // 设置默认权限
+                null, PRIVILEGE_DEFAULT); // 设置默认权限
     }
 
     public Account(
@@ -32,8 +39,7 @@ public class Account {
             String empNo,
             String privilege) {
         setName(name);
-        // passwordIsHashed表明密码是否已经被摘要
-        setHashedPassword(password, passwordIsHashed);
+        setHashedPassword(password, passwordIsHashed); // passwordIsHashed表明密码是否已经被摘要
         setEmpNo(empNo);
         setPrivilege(privilege);
     }
@@ -80,5 +86,18 @@ public class Account {
                 ", empNo='" + empNo + '\'' +
                 ", privilege='" + privilege + '\'' +
                 '}';
+    }
+
+    // 权限判断便利方法
+    public boolean isAdmin() {
+        return getPrivilege().equals(PRIVILEGE_ADMIN);
+    }
+
+    public boolean isPersonnelStaff() {
+        return getPrivilege().equals(PRIVILEGE_PERSONNEL_STAFF);
+    }
+
+    public boolean isNormalStaff() {
+        return getPrivilege().equals(PRIVILEGE_NORMAL_STAFF);
     }
 }

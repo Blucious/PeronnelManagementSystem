@@ -135,5 +135,32 @@ public final class DBAccessUtil {
 
         return qr;
     }
+
+    public static void printAllExceptionInformation(SQLException e) {
+        // JDBC 异常处理
+        // getErrorCode() 获取错误编号。
+        // getMessage() 获取错误消息。
+        // getSQLState() 获取SQLstate字符串。 对于数据库错误，将返回五位数的XOPEN SQLstate代码。
+        // getNextException() 获取异常链中的下一个异常对象。
+        // printStackTrace() 将当前异常及其回溯打印到标准错误流。
+        // printStackTrace(PrintStream s) 将此可抛弃项及其回溯打印到指定的打印流。
+        // printStackTrace(PrintWriter w) 将此可抛弃项及其回溯打印到指定的打印作者。
+
+        System.out.println("Message:");
+        System.out.println(e.getMessage());
+        System.out.println("ErrorCode:");
+        System.out.println(e.getErrorCode());
+        System.out.println("SQLState:");
+        System.out.println(e.getSQLState());
+        e.printStackTrace();
+    }
+
+//    public static class ModelData {
+//
+//    }
+//
+//    public ModelData queryModelData(String sql, Object... args) {
+//
+//    }
 }
 

@@ -5,13 +5,19 @@
 package PMS.gui;
 
 import PMS.entity.Account;
-import PMS.gui.employee.EmployeeManagementPanel;
-
+import PMS.entity.Employee;
 import PMS.db.DBAccount;
+import PMS.db.DBEmployee;
+import PMS.gui.employee.EmployeeManagementPanel;
+import PMS.gui.employee.EmployeeInterfacePanel;
+import PMS.gui.message.MessagePanel;
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
+
+import PMS.gui.account.ModifyAccountDialog;
+
 
 /**
  * @author c
@@ -20,27 +26,49 @@ public class MainFrame extends JFrame {
     // 登录该窗口的账号
     private Account loginAccount;
     // 子面板
-    private JPanel panelEmployeeManagement;
-
+    private EmployeeManagementPanel panelEmployeeManagement;
+    private EmployeeInterfacePanel employeeInterfacePanel;
+    private MessagePanel messagePanel;
 
     public MainFrame(Account loginAccount) {
-
         initComponents();
 
         // 自定义初始化
 
         // 设置该窗口对应的账号
         this.loginAccount = loginAccount;
+
+        // 设置标题
+        String bindInfo;
+        Employee loginEmployee = DBEmployee.get(loginAccount.getEmpNo());
+        if (loginEmployee != null) {
+            bindInfo = loginEmployee.getName();
+        } else {
+            bindInfo = "未绑定员工";
+        }
+        this.setTitle(String.format("[当前账号：%s - %s] - 人事管理系统",
+                loginAccount.getName(), bindInfo));
+
         // 添加面板
-        panelEmployeeManagement = new EmployeeManagementPanel();
-        tabbedPane.addTab("员工管理", panelEmployeeManagement);
+        // 专有面板
+        if (this.loginAccount.isPersonnelStaff()) {
+            panelEmployeeManagement = new EmployeeManagementPanel();
+            tabbedPane.addTab("员工管理", panelEmployeeManagement);
+        } else {
+            employeeInterfacePanel = new EmployeeInterfacePanel(loginAccount.getEmpNo());
+            tabbedPane.addTab("个人信息查询", employeeInterfacePanel);
+        }
+        // 通用面板
+        messagePanel = new MessagePanel();
+        tabbedPane.add("消息反馈", messagePanel);
+
     }
 
 
     private void thisWindowClosing(WindowEvent e) {
         // 弹出对话框确认关闭行为
         int optionValue = JOptionPane.showConfirmDialog(
-                this, "是否确认关闭？","提示",
+                this, "是否确认关闭？", "提示",
                 JOptionPane.OK_CANCEL_OPTION);
 
         // 如果点击确定则结束程序，否则什么都不做
@@ -51,20 +79,37 @@ public class MainFrame extends JFrame {
         }
     }
 
+    private void menuItemClockingInMouseReleased(MouseEvent e) {
+        // TODO add your code here
+    }
+
+    private void menuItemModifyPasswordMouseReleased(MouseEvent e) {
+        ModifyAccountDialog modifyAccount =
+                new ModifyAccountDialog(null, loginAccount.getName(),loginAccount);
+        modifyAccount.setVisible(true);
+        modifyAccount.dispose();
+
+        Account account = (Account) modifyAccount.getInputData();
+        if (account != null) {
+            System.out.println(account); // 调试
+            DBAccount.update(account.getName(), account);
+        }
+    }
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
         // Generated using JFormDesigner Evaluation license - c
         menuBar = new JMenuBar();
-        menu1 = new JMenu();
-        menuItem3 = new JMenuItem();
-        menuItem1 = new JMenuItem();
-        menu2 = new JMenu();
+        menuAccount = new JMenu();
+        menuItemClockingIn = new JMenuItem();
+        menuItemModifyPassword = new JMenuItem();
+        menuHelp = new JMenu();
         menuItem2 = new JMenuItem();
         menuItem4 = new JMenuItem();
         tabbedPane = new JTabbedPane();
 
         //======== this ========
-        setMinimumSize(new Dimension(600, 400));
+        setMinimumSize(new Dimension(800, 540));
         setName("frame0");
         setTitle("\u4eba\u4e8b\u7ba1\u7406\u7cfb\u7edf");
         setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
@@ -80,33 +125,45 @@ public class MainFrame extends JFrame {
         //======== menuBar ========
         {
 
-            //======== menu1 ========
+            //======== menuAccount ========
             {
-                menu1.setText("\u8d26\u53f7");
+                menuAccount.setText("\u8d26\u53f7");
 
-                //---- menuItem3 ----
-                menuItem3.setText("\u6253\u5361");
-                menu1.add(menuItem3);
+                //---- menuItemClockingIn ----
+                menuItemClockingIn.setText("\u6253\u5361");
+                menuItemClockingIn.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        menuItemClockingInMouseReleased(e);
+                    }
+                });
+                menuAccount.add(menuItemClockingIn);
 
-                //---- menuItem1 ----
-                menuItem1.setText("\u4fee\u6539\u5bc6\u7801");
-                menu1.add(menuItem1);
+                //---- menuItemModifyPassword ----
+                menuItemModifyPassword.setText("\u4fee\u6539\u5bc6\u7801");
+                menuItemModifyPassword.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        menuItemModifyPasswordMouseReleased(e);
+                    }
+                });
+                menuAccount.add(menuItemModifyPassword);
             }
-            menuBar.add(menu1);
+            menuBar.add(menuAccount);
 
-            //======== menu2 ========
+            //======== menuHelp ========
             {
-                menu2.setText("\u5e2e\u52a9");
+                menuHelp.setText("\u5e2e\u52a9");
 
                 //---- menuItem2 ----
                 menuItem2.setText("\u5e2e\u52a9\u5185\u5bb9");
-                menu2.add(menuItem2);
+                menuHelp.add(menuItem2);
 
                 //---- menuItem4 ----
                 menuItem4.setText("\u5173\u4e8e");
-                menu2.add(menuItem4);
+                menuHelp.add(menuItem4);
             }
-            menuBar.add(menu2);
+            menuBar.add(menuHelp);
         }
         setJMenuBar(menuBar);
 
@@ -124,10 +181,10 @@ public class MainFrame extends JFrame {
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
     // Generated using JFormDesigner Evaluation license - c
     private JMenuBar menuBar;
-    private JMenu menu1;
-    private JMenuItem menuItem3;
-    private JMenuItem menuItem1;
-    private JMenu menu2;
+    private JMenu menuAccount;
+    private JMenuItem menuItemClockingIn;
+    private JMenuItem menuItemModifyPassword;
+    private JMenu menuHelp;
     private JMenuItem menuItem2;
     private JMenuItem menuItem4;
     private JTabbedPane tabbedPane;
@@ -135,9 +192,8 @@ public class MainFrame extends JFrame {
 
     // 测试
     public static void main(String[] args) {
-        // 用admin账号进行测试
-        Account accAdmin = DBAccount.get("admin");
-        MainFrame mainFrame = new MainFrame(accAdmin);
+        Account acc = DBAccount.get("personnelStaff");
+        MainFrame mainFrame = new MainFrame(acc);
         mainFrame.setVisible(true);
     }
 }
