@@ -6,7 +6,6 @@ import PMS.db.util.ResultSetHandler;
 import PMS.entity.Account;
 
 import java.sql.ResultSet;
-import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Iterator;
@@ -81,6 +80,20 @@ public final class DBAccount {
         return ur.state;
     }
 
+
+    // 创建结果集处理函数，单结果通用
+    private static ResultSetHandler rshSingle = (ResultSet rs) -> {
+        Account a = null;
+        if (rs.next()) {
+            a = new Account();
+            a.setName(rs.getString(1));
+            a.setHashedPassword(rs.getString(2), true);
+            a.setEmpNo(rs.getString(3));
+            a.setPrivilege(rs.getString(4));
+        }
+        return a;
+    };
+
     /**
      * 通过账户名字查询
      *
@@ -90,21 +103,23 @@ public final class DBAccount {
     public static Account get(String name) {
         // 查询语句
         String sql = "SELECT * FROM account WHERE accName=?";
-        // 创建结果集处理函数
-        ResultSetHandler rsh = (ResultSet rs) -> {
-            Account a = null;
-            if (rs.next()) {
-                a = new Account();
-                a.setName(rs.getString(1));
-                a.setHashedPassword(rs.getString(2), true);
-                a.setEmpNo(rs.getString(3));
-                a.setPrivilege(rs.getString(4));
-            }
-            return a;
-        };
         // 执行查询
         DBAccessUtil.QueryResult qr =
-                DBAccessUtil.queryWrapped(sql, rsh, name);
+                DBAccessUtil.queryWrapped(sql, rshSingle, name);
+        // 如果有异常则处理异常
+        if (qr.exception != null) {
+            qr.exception.printStackTrace();
+        }
+        // 返回查询结果
+        return (Account) qr.result;
+    }
+
+    public static Account getByEmpNo(String no) {
+        // 查询语句
+        String sql = "SELECT * FROM account WHERE accEmpNo=?";
+        // 执行查询
+        DBAccessUtil.QueryResult qr =
+                DBAccessUtil.queryWrapped(sql, rshSingle, no);
         // 如果有异常则处理异常
         if (qr.exception != null) {
             qr.exception.printStackTrace();

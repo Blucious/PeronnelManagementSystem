@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.0.6.255" Java: "11.0.3" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.0.6.255" Java: "11.0.4" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -8,97 +8,79 @@ new FormModel {
 			"$locationPolicy": 1
 			"$sizePolicy": 1
 			"modal": true
+			"title": "修改员工信息"
 			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.BorderLayout ) ) {
 				name: "dialogPane"
 				"border": new javax.swing.border.EmptyBorder( 12, 12, 12, 12 )
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "left:0:1.0, 0:1.0"
-					"$rowSpecs": "0, 0, 0, 0, 0, 0, 0"
+					"$columnSpecs": "left:0, 250"
+					"$rowSpecs": "0, 0, 0, 0, 0"
 					"$hGap": 5
 					"$vGap": 5
 				} ) {
 					name: "contentPanel"
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label7"
-						"text": "输入员工详细信息。"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridwidth": 2
-					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
 						name: "label1"
-						"text": "empNo："
+						"text": "员工号："
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "label2"
+						"text": "员工姓名："
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 1
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label2"
-						"text": "empName："
+						name: "label3"
+						"text": "员工生日："
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 2
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label3"
-						"text": "empBirthday："
+						name: "label4"
+						"text": "员工所属部门："
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 3
 					} )
 					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label4"
-						"text": "empDeptNo："
+						name: "label5"
+						"text": "员工头衔："
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridy": 4
 					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label5"
-						"text": "empTitle："
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 5
-					} )
-					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "textFieldEmpClockingIn"
-						"text": "0"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 1
-						"gridy": 6
-					} )
 					add( new FormComponent( "javax.swing.JComboBox" ) {
 						name: "comboBoxEmpTitle"
-					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridx": 1
-						"gridy": 5
-					} )
-					add( new FormComponent( "javax.swing.JComboBox" ) {
-						name: "comboBoxEmpDeptNo"
 						auxiliary() {
-							"JavaCodeGenerator.typeParameters": "Department"
+							"JavaCodeGenerator.typeParameters": "String"
 						}
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridy": 4
 					} )
-					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "textFieldEmpBirthday"
+					add( new FormComponent( "javax.swing.JComboBox" ) {
+						name: "comboBoxEmpDeptNo"
+						auxiliary() {
+							"JavaCodeGenerator.typeParameters": "String"
+						}
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridy": 3
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "textFieldEmpName"
+						name: "textFieldEmpBirthday"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridy": 2
 					} )
 					add( new FormComponent( "javax.swing.JTextField" ) {
-						name: "textFieldEmpNo"
+						name: "textFieldEmpName"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridy": 1
 					} )
-					add( new FormComponent( "javax.swing.JLabel" ) {
-						name: "label6"
-						"text": "empClockingIn："
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "textFieldEmpNo"
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
-						"gridy": 6
+						"gridx": 1
 					} )
 				}, new FormLayoutConstraints( class java.lang.String ) {
 					"value": "Center"
@@ -113,19 +95,15 @@ new FormModel {
 					"border": new javax.swing.border.EmptyBorder( 12, 0, 0, 0 )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "okButton"
-						"text": "OK"
-						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "okButtonMouseReleased", true ) )
-						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "okButtonMouseClicked", true ) )
-						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "okButtonMouseClicked", true ) )
+						"text": "修改"
 						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "okButtonMouseClicked", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
-						"gridy": 0
 					} )
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "cancelButton"
-						"text": "Cancel"
-						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "cancelButtonMouseReleased", true ) )
+						"text": "取消"
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "cancelButtonMouseClicked", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 2
 						"gridy": 0
@@ -138,7 +116,7 @@ new FormModel {
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 15, 20 )
-			"size": new java.awt.Dimension( 535, 375 )
+			"size": new java.awt.Dimension( 455, 320 )
 		} )
 	}
 }

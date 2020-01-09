@@ -137,6 +137,72 @@ new FormModel {
 				}, new FormLayoutConstraints( null ) {
 					"title": "注册"
 				} )
+				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+					"$columnSpecs": "center:0, center:0, center:150, 0"
+					"$rowSpecs": "center:0, center:0, center:0, 0, center:0"
+					"$hGap": 8
+					"$vGap": 8
+				} ) {
+					name: "panelForgotPassword"
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "forgotPasswordLabel1"
+						"text": "账户："
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "forgotPasswordTextFieldAccountName"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridwidth": 2
+						"gridx": 1
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "forgotPasswordLabelAccountNamePrompt"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 3
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "forgotPasswordLabel3"
+						"text": "验证码："
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 1
+					} )
+					add( new FormComponent( "javax.swing.JTextField" ) {
+						name: "forgotPasswordTextFieldVerificationCode"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 1
+						"gridy": 1
+						"gridwidth": 2
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "forgotPasswordLabelVerificationCodePrompt"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 3
+						"gridy": 1
+					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "forgotPasswordButtonConfirm"
+						"text": "发送验证码"
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "forgotPasswordButtonConfirmMouseClicked", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 2
+						"hAlign": 0
+						"gridwidth": 3
+					} )
+					add( new FormComponent( "javax.swing.JSeparator" ) {
+						name: "forgotPasswordSeparator1"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridy": 3
+						"gridwidth": 3
+					} )
+					add( new FormComponent( "javax.swing.JLabel" ) {
+						name: "forgotPasswordLabel2"
+						"text": "通过绑定的邮箱找回密码"
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridwidth": 3
+						"gridy": 4
+					} )
+				}, new FormLayoutConstraints( null ) {
+					"title": "忘记密码"
+				} )
 			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 70, 65 )

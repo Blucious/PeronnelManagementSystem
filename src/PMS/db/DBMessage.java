@@ -22,14 +22,14 @@ public final class DBMessage {
     public static boolean add(Message msg) {
         // 查询语句
         String sql = "INSERT INTO message " +
-                "(msgSenderAccNo, msgReceiverAccNo, " +
+                "(msgSenderAccName, msgReceiverAccName, " +
                 "msgSendTime, msgMessage) " +
                 "VALUES (?,?,?,?)";
         // 执行查询
         DBAccessUtil.UpdateResult ur =
                 DBAccessUtil.updateWrapped(sql,
-                        msg.getSenderAccNo(),
-                        msg.getReceiverAccNo(),
+                        msg.getSenderAccName(),
+                        msg.getReceiverAccName(),
                         msg.getSendTime(),
                         msg.getMessage());
         // 异常处理
@@ -59,7 +59,7 @@ public final class DBMessage {
      */
     public static boolean deleteBySenderAccNo(String no) {
         String sql = "DELETE FROM message " +
-                "WHERE msgSenderAccNo=?";
+                "WHERE msgSenderAccName=?";
         DBAccessUtil.UpdateResult ur =
                 DBAccessUtil.updateWrapped(sql, no);
         if (ur.exception != null) {
@@ -73,7 +73,7 @@ public final class DBMessage {
      */
     public static boolean deleteByReceiverAccNo(String no) {
         String sql = "DELETE FROM message " +
-                "WHERE msgReceiverAccNo=?";
+                "WHERE msgReceiverAccName=?";
         DBAccessUtil.UpdateResult ur =
                 DBAccessUtil.updateWrapped(sql, no);
         if (ur.exception != null) {
@@ -106,8 +106,8 @@ public final class DBMessage {
         while (rs.next()) {
             m = new Message();
             m.setNo(rs.getInt(1));
-            m.setSenderAccNo(rs.getString(2));
-            m.setReceiverAccNo(rs.getString(3));
+            m.setSenderAccName(rs.getString(2));
+            m.setReceiverAccName(rs.getString(3));
             m.setSendTime(rs.getDate(4));
             m.setMessage(rs.getString(5));
             l.add(m);
@@ -121,7 +121,7 @@ public final class DBMessage {
     @SuppressWarnings("unchecked cast")
     public static Iterator<Message> getBySenderAccNo(String no) {
         String sql = "SELECT * FROM message " +
-                "WHERE msgSenderAccNo=?";
+                "WHERE msgSenderAccName=?";
         // 执行查询
         DBAccessUtil.QueryResult qr =
                 DBAccessUtil.queryWrapped(sql, rshMultiple, no);
@@ -139,7 +139,7 @@ public final class DBMessage {
     @SuppressWarnings("unchecked cast")
     public static Iterator<Message> getByReceiverAccNo(String no) {
         String sql = "SELECT * FROM message " +
-                "WHERE msgReceiverAccNo=?";
+                "WHERE msgReceiverAccName=?";
         // 执行查询
         DBAccessUtil.QueryResult qr =
                 DBAccessUtil.queryWrapped(sql, rshMultiple, no);

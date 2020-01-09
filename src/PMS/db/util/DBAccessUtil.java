@@ -2,7 +2,10 @@ package PMS.db.util;
 
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 实体增删改查模板类
@@ -152,15 +155,63 @@ public final class DBAccessUtil {
         System.out.println(e.getErrorCode());
         System.out.println("SQLState:");
         System.out.println(e.getSQLState());
+        System.out.println("StackTrace：");
         e.printStackTrace();
     }
 
-//    public static class ModelData {
-//
-//    }
-//
-//    public ModelData queryModelData(String sql, Object... args) {
-//
-//    }
+    public static class TableModelData {
+        public List<String> columnNames;
+        public List<List<Object>> valuesList;
+    }
+
+    public static TableModelData queryTableModelData(String sql, Object... args) {
+        TableModelData tmd = null;
+
+        try {
+            // 查询
+            PreparedStatement ps = MySqlUtil.prepareStatement(sql);
+            if (args != null) {
+                for (int i = 0; i < args.length; i++) {
+                    ps.setObject(i + 1, args[i]);
+                }
+            }
+            // 获取结果集
+            ResultSet rs = ps.executeQuery();
+
+            // 将指针移动到此 ResultSet 对象的最后一行。以获取当前行的编号，也就是记录数量（没有记录则为0）
+            rs.last();
+            int numberOfRows = rs.getRow();
+            // 获取结果集的元数据，也就是列的编号、类型和属性
+            ResultSetMetaData rsmd = rs.getMetaData();
+            int numberOfColumns = rsmd.getColumnCount(); // 得到ResultSet对象中的列数
+
+
+            // 开始设置数据
+            tmd = new TableModelData();
+
+            // 读取列名
+            tmd.columnNames = new ArrayList<>(numberOfColumns);
+            for (int i = 0; i < numberOfColumns; i++) {
+                // 读取列的别名（没有就原名）
+                tmd.columnNames.add(rsmd.getColumnLabel(i + 1));
+            }
+
+            // 读取记录
+            tmd.valuesList = new ArrayList<>(numberOfRows);
+            for (int i = 0; i < numberOfRows; i++) {
+                List<Object> values = new ArrayList<>(numberOfColumns);
+                rs.absolute(i + 1); // 游标定位到指定的行
+                for (int j = 0; j < numberOfColumns; j++) {
+                    values.add(rs.getObject(j + 1));
+                }
+                tmd.valuesList.add(values);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return tmd;
+    }
 }
 

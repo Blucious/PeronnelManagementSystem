@@ -1,6 +1,7 @@
 package PMS.entity;
 
 import java.sql.Date;
+import java.text.SimpleDateFormat;
 
 
 public class Employee {
@@ -9,7 +10,11 @@ public class Employee {
     private Date birthday;
     private String depNo;
     private String title;
-    private int clockingIn;
+
+    private final static SimpleDateFormat simpleDateFormat;
+    static {
+        simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+    }
 
     public Employee() {}
 
@@ -17,14 +22,12 @@ public class Employee {
                     String name,
                     Date birthday,
                     String depNo,
-                    String title,
-                    int clockingIn) {
+                    String title) {
         setNo(no);
         setName(name);
         setBirthday(birthday);
         setDepNo(depNo);
         setTitle(title);
-        setClockingIn(clockingIn);
     }
 
     public String getNo() {
@@ -47,6 +50,10 @@ public class Employee {
         return birthday;
     }
 
+    public String getBirthdayString() {
+        return simpleDateFormat.format(birthday);
+    }
+
     public void setBirthday(Date birthday) {
         this.birthday = birthday;
     }
@@ -67,14 +74,6 @@ public class Employee {
         this.title = title;
     }
 
-    public int getClockingIn() {
-        return clockingIn;
-    }
-
-    public void setClockingIn(int clockingIn) {
-        this.clockingIn = clockingIn;
-    }
-
     @Override
     public String toString() {
         return "Employee{" +
@@ -83,7 +82,30 @@ public class Employee {
                 ", birthday=" + birthday +
                 ", deptNo='" + depNo + '\'' +
                 ", title='" + title + '\'' +
-                ", clockingIn=" + clockingIn +
                 '}';
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Employee employee = (Employee) o;
+
+        if (no != null ? !no.equals(employee.no) : employee.no != null) return false;
+        if (name != null ? !name.equals(employee.name) : employee.name != null) return false;
+        if (birthday != null ? !birthday.equals(employee.birthday) : employee.birthday != null) return false;
+        if (depNo != null ? !depNo.equals(employee.depNo) : employee.depNo != null) return false;
+        return title != null ? title.equals(employee.title) : employee.title == null;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = no != null ? no.hashCode() : 0;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (birthday != null ? birthday.hashCode() : 0);
+        result = 31 * result + (depNo != null ? depNo.hashCode() : 0);
+        result = 31 * result + (title != null ? title.hashCode() : 0);
+        return result;
     }
 }

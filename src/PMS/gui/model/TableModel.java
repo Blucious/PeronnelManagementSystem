@@ -23,6 +23,10 @@ public class TableModel extends AbstractTableModel {
     private int numberOfRows;                       // 表格模型中的行数
     private int numberOfColumns;                    // 表格模型中的列数
 
+    public TableModel() {
+        setQuery("SELECT 'init'");
+    }
+
     public TableModel(String sql, Object... args) {
         // 初始化结果集元数据、结果集行数和列数等
         setQuery(sql, args);
@@ -31,7 +35,7 @@ public class TableModel extends AbstractTableModel {
     // 覆盖父类AbstractTableModel的方法：设置表格模型的列标题
     public String getColumnName(int column) {
         try {
-            return resultSetMetaData.getColumnName(column + 1);
+            return resultSetMetaData.getColumnLabel(column + 1);
         } catch (SQLException e) {
             e.printStackTrace();
         }

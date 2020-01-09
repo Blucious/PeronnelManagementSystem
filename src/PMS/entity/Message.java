@@ -4,8 +4,8 @@ import java.util.Date;
 
 public class Message {
     private int no;
-    private String senderAccNo;
-    private String receiverAccNo;
+    private String senderAccName;
+    private String receiverAccName;
     private Date sendTime;
     private String message;
 
@@ -13,23 +13,23 @@ public class Message {
     }
 
     // 新建消息，日期为当前日期，不设置no，no由数据库设置
-    public Message(String senderAccNo, String receiverAccNo, String message) {
-        this(senderAccNo, receiverAccNo, new Date(), message);
+    public Message(String senderAccName, String receiverAccName, String message) {
+        this(senderAccName, receiverAccName, new Date(), message);
     }
 
     // 新建消息并指定日期，不设置no，no由数据库设置
-    public Message(String senderAccNo, String receiverAccNo, Date sendTime, String message) {
-        setSenderAccNo(senderAccNo);
-        setReceiverAccNo(receiverAccNo);
+    public Message(String senderAccName, String receiverAccName, Date sendTime, String message) {
+        setSenderAccName(senderAccName);
+        setReceiverAccName(receiverAccName);
         setSendTime(sendTime);
         setMessage(message);
     }
 
     // 放入已有的消息，设置no
-    public Message(int no, String senderAccNo, String receiverAccNo, Date sendTime, String message) {
+    public Message(int no, String senderAccName, String receiverAccName, Date sendTime, String message) {
         setNo(no);
-        setSenderAccNo(senderAccNo);
-        setReceiverAccNo(receiverAccNo);
+        setSenderAccName(senderAccName);
+        setReceiverAccName(receiverAccName);
         setSendTime(sendTime);
         setMessage(message);
     }
@@ -42,20 +42,20 @@ public class Message {
         this.no = no;
     }
 
-    public String getSenderAccNo() {
-        return senderAccNo;
+    public String getSenderAccName() {
+        return senderAccName;
     }
 
-    public void setSenderAccNo(String senderAccNo) {
-        this.senderAccNo = senderAccNo;
+    public void setSenderAccName(String senderAccName) {
+        this.senderAccName = senderAccName;
     }
 
-    public String getReceiverAccNo() {
-        return receiverAccNo;
+    public String getReceiverAccName() {
+        return receiverAccName;
     }
 
-    public void setReceiverAccNo(String receiverAccNo) {
-        this.receiverAccNo = receiverAccNo;
+    public void setReceiverAccName(String receiverAccName) {
+        this.receiverAccName = receiverAccName;
     }
 
     public Date getSendTime() {
@@ -78,8 +78,8 @@ public class Message {
     public String toString() {
         return "Message{" +
                 "no=" + no +
-                ", senderAccNo='" + senderAccNo + '\'' +
-                ", receiverAccNo='" + receiverAccNo + '\'' +
+                ", senderAccName='" + senderAccName + '\'' +
+                ", receiverAccName='" + receiverAccName + '\'' +
                 ", sendTime=" + sendTime +
                 ", message='" + message + '\'' +
                 '}';

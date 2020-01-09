@@ -12,6 +12,7 @@ import java.sql.SQLException;
 import javax.swing.*;
 
 import PMS.db.DBAccount;
+import PMS.db.DBClockingIn;
 import PMS.db.DBEmployee;
 import PMS.db.util.MySqlUtil;
 import PMS.entity.Account;
@@ -23,43 +24,51 @@ import PMS.gui.model.TableModel;
  * @author c
  */
 public class EmployeeManagementPanel extends JPanel {
-    // 表数据模型
-    private TableModel tableModelEmployee;
 
-    public EmployeeManagementPanel() {
+    private TableModel tableModelEmployee; // 表数据模型
+    private Account account;
+
+    public EmployeeManagementPanel(Account account) {
         initComponents();
-        String sql = "select * from employee ";
-        tableModelEmployee = new TableModel(sql);
+
+
+        this.account = account;
+
+        tableModelEmployee = new TableModel();
         tableEmployee.setModel(tableModelEmployee);
-
-
+        refreshTable();
     }
 
-    private void button1MouseReleased(MouseEvent e) {
-        DataInputDialog dialog = new AddingEmployeeDialog(null);
-        dialog.setVisible(true);
-        dialog.dispose();
-
-        Employee emp = (Employee) dialog.getInputData();
-        if (emp != null) {
-
-            DBEmployee.add(emp);
-            String defaultpwd = emp.getBirthday().toString().replace("-", "");
-            Account account = new Account(emp.getName(), defaultpwd, false, emp.getNo(), "普通员工");
-            DBAccount.add(account);
-            tableModelEmployee.setQuery("select * from employee");
-        }
+    private void refreshTable() {
+        String sql = "select empNo 员工号, empName 员工名, empBirthday 出生日期," +
+                "depName 部门, empTitle 职称, count(Cleno) 考勤天数 " +
+                "from employee left outer join clockingin on (employee.empNo=clockingin.Cleno) " +
+                "left outer join department on (employee.empDepNo=department.depNo) " +
+                "group by empNo";
+        tableModelEmployee.setQuery(sql);
     }
 
     private void buttonModifyMouseReleased(MouseEvent e) {
-        DataInputDialog dialog = new ModifyEmployeeDialog(null);
+        int selectedRow = tableEmployee.getSelectedRow();
+        if (selectedRow == -1) {
+            JOptionPane.showMessageDialog(
+                    this, "未选择员工", "提示",
+                    JOptionPane.ERROR_MESSAGE);
+            return;
+        }
+
+        String empOriginalNo = (String) tableEmployee.getValueAt(selectedRow, 0);
+        Employee empOriginal = DBEmployee.get(empOriginalNo);
+
+
+        DataInputDialog dialog = new ModifyEmployeeDialog(empOriginal);
         dialog.setVisible(true);
         dialog.dispose();
 
-        Employee emp = (Employee) dialog.getInputData();
-        if (emp != null) {
-            DBEmployee.update(emp.getNo(), emp);
-            tableModelEmployee.setQuery("select * from employee");
+        Employee empModified = (Employee) dialog.getInputData();
+        if (empModified != null) {
+            DBEmployee.update(empOriginal.getNo(), empModified);
+            refreshTable();
         }
     }
 
@@ -71,42 +80,56 @@ public class EmployeeManagementPanel extends JPanel {
         ResultSet resultSet = null;
         for (int i = 0; i < deleno.length; i++) {
             String sql = "select accName from account where accEmpNo in (select empNo from employee where empNo ='" + deleno[i] + "')";
-//            DBAccessUtil.query(sql,);
             try {
 
                 PreparedStatement ps = MySqlUtil.prepareStatement(sql);
                 resultSet = ps.executeQuery();
                 while (resultSet.next()) {
-                    System.out.println(resultSet.getString(1));
                     DBAccount.delete(resultSet.getString(1));
                 }
-
+                DBClockingIn.delete(deleno[i]);
                 DBEmployee.delete(deleno[i]);
             } catch (SQLException ex) {
                 ex.printStackTrace();
             }
 
         }
-        tableModelEmployee.setQuery("select * from employee");
+        refreshTable();
     }
 
     private void tableEmployeeMouseReleased(MouseEvent e) {
-
-//        tableModelEmployee.setQuery("select * from employee");
-//
-        int line = tableEmployee.getSelectedRow();
-        ModifyEmployeeDialog modifyEmployee = new ModifyEmployeeDialog(null, (String) tableEmployee.getValueAt(line, 0));
-        modifyEmployee.setVisible(true);
-
-        modifyEmployee.dispose();
-
-        Employee emp = (Employee) modifyEmployee.getInputData();
-        if (emp != null) {
-            DBEmployee.update(emp.getNo(), emp);
-            tableModelEmployee.setQuery("select * from employee");
+        if (e.getClickCount() == 2) {
+            int selectedRow = tableEmployee.getSelectedRow();
+            String tableeno = (String) tableEmployee.getValueAt(selectedRow, 0);
+            EmployeeClockingin employeeClockingin = new EmployeeClockingin(null, tableeno, account);
+            employeeClockingin.setVisible(true);
+            employeeClockingin.dispose();
         }
     }
 
+    private void buttonModifyClockingInMouseReleased(MouseEvent e) {
+        SetClockinginTime setClockinginTime = new SetClockinginTime(null);
+        setClockinginTime.setVisible(true);
+        setClockinginTime.dispose();
+    }
+
+    private void buttonAddMouseReleased(MouseEvent e) {
+        DataInputDialog dialog = new AddingEmployeeDialog(null);
+        dialog.setVisible(true);
+        dialog.dispose();
+
+        Employee emp = (Employee) dialog.getInputData();
+//        System.out.println(emp);
+        if (emp != null) {
+
+            DBEmployee.add(emp);
+            String defaultpwd = emp.getBirthday().toString().replace("-", "");
+            Account account = new Account(emp.getName(), defaultpwd, false, emp.getNo(), "普通员工");
+            DBAccount.add(account);
+
+            refreshTable();
+        }
+    }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
@@ -116,20 +139,21 @@ public class EmployeeManagementPanel extends JPanel {
         buttonAdd = new JButton();
         buttonModify = new JButton();
         buttonDelete = new JButton();
+        buttonModifyClockingIn = new JButton();
         scrollPane = new JScrollPane();
         tableEmployee = new JTable();
 
         //======== this ========
-        setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax
-                .swing.border.EmptyBorder(0, 0, 0, 0), "JFor\u006dDesi\u0067ner \u0045valu\u0061tion", javax.swing
-                .border.TitledBorder.CENTER, javax.swing.border.TitledBorder.BOTTOM, new java.awt.
-                Font("Dia\u006cog", java.awt.Font.BOLD, 12), java.awt.Color.red
-        ), getBorder()));
+        setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder
+                (0, 0, 0, 0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax.swing.border.TitledBorder.CENTER, javax.swing.border
+                .TitledBorder.BOTTOM, new java.awt.Font("Dia\u006cog", java.awt.Font.BOLD, 12), java.awt
+                .Color.red), getBorder()));
         addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             @Override
-            public void propertyChange(java.beans.PropertyChangeEvent e) {
-                if ("bord\u0065r".equals(e.getPropertyName(
-                ))) throw new RuntimeException();
+            public void
+            propertyChange(java.beans.PropertyChangeEvent e) {
+                if ("\u0062ord\u0065r".equals(e.getPropertyName())) throw new RuntimeException()
+                        ;
             }
         });
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -142,7 +166,7 @@ public class EmployeeManagementPanel extends JPanel {
             {
                 panel2.setMaximumSize(null);
                 panel2.setLayout(new GridBagLayout());
-                ((GridBagLayout) panel2.getLayout()).columnWidths = new int[]{10, 0, 0, 0, 0, 115, 0};
+                ((GridBagLayout) panel2.getLayout()).columnWidths = new int[]{10, 0, 0, 0, 0, 0, 0};
                 ((GridBagLayout) panel2.getLayout()).rowHeights = new int[]{10, 0, 5, 0};
                 ((GridBagLayout) panel2.getLayout()).columnWeights = new double[]{0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 1.0E-4};
                 ((GridBagLayout) panel2.getLayout()).rowWeights = new double[]{0.0, 0.0, 0.0, 1.0E-4};
@@ -152,7 +176,7 @@ public class EmployeeManagementPanel extends JPanel {
                 buttonAdd.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseReleased(MouseEvent e) {
-                        button1MouseReleased(e);
+                        buttonAddMouseReleased(e);
                     }
                 });
                 panel2.add(buttonAdd, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
@@ -182,6 +206,18 @@ public class EmployeeManagementPanel extends JPanel {
                 panel2.add(buttonDelete, new GridBagConstraints(3, 1, 1, 1, 0.0, 0.0,
                         GridBagConstraints.CENTER, GridBagConstraints.BOTH,
                         new Insets(0, 0, 5, 5), 0, 0));
+
+                //---- buttonModifyClockingIn ----
+                buttonModifyClockingIn.setText("\u4fee\u6539\u8003\u52e4\u65f6\u95f4");
+                buttonModifyClockingIn.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        buttonModifyClockingInMouseReleased(e);
+                    }
+                });
+                panel2.add(buttonModifyClockingIn, new GridBagConstraints(4, 1, 1, 1, 0.0, 0.0,
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 5), 0, 0));
             }
             panel1.add(panel2);
 
@@ -192,6 +228,7 @@ public class EmployeeManagementPanel extends JPanel {
 
                 //---- tableEmployee ----
                 tableEmployee.setMaximumSize(null);
+                tableEmployee.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
                 tableEmployee.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseReleased(MouseEvent e) {
@@ -213,6 +250,7 @@ public class EmployeeManagementPanel extends JPanel {
     private JButton buttonAdd;
     private JButton buttonModify;
     private JButton buttonDelete;
+    private JButton buttonModifyClockingIn;
     private JScrollPane scrollPane;
     private JTable tableEmployee;
     // JFormDesigner - End of variables declaration  //GEN-END:variables

@@ -35,7 +35,7 @@ public class ModifyAccountDialog extends DataInputDialog {
         Iterator<Privilege> privilegeIterator = DBPrivilege.getAll();
         while (privilegeIterator.hasNext()) {
             Privilege p = privilegeIterator.next();
-            comboxPrivilege.addItem(p);
+            comboxPrivilege.addItem(p.getName());
         }
 
         // 根据权限隐藏一些功能
@@ -45,6 +45,7 @@ public class ModifyAccountDialog extends DataInputDialog {
             labelNo.setVisible(false);
             labelPrivilege.setVisible(false);
             scrollPane1.setVisible(false);
+            deletebutton.setVisible(false);
         }
     }
 
@@ -55,13 +56,19 @@ public class ModifyAccountDialog extends DataInputDialog {
     private void okButtonMouseReleased(MouseEvent e) {
 
 
+
+
         Account acc;
         if (accountToModify.isAdmin()) {
             acc = new Account(
                     textFieldName.getText(),
                     textFieldPassword.getText(), false,
                     textFieldNo.getText(),
-                    ((Privilege) comboxPrivilege.getSelectedItem()).getName());
+                    ((String)comboxPrivilege.getSelectedItem()));
+            if (textFieldNo.getText().length()==0){
+                acc.setEmpNo(null);
+
+            }
             this.setInputData(acc);
             System.out.println(acc);
             this.setVisible(false);
@@ -86,9 +93,25 @@ public class ModifyAccountDialog extends DataInputDialog {
     }
 
 
+    private void deletebuttonMouseClicked(MouseEvent e) {
+            String accname=textFieldName.getText();
+
+        if (accountToModify.isAdmin()) {
+            this.setInputData(accname);
+            System.out.println(accname);
+            this.setVisible(false);
+        }
+
+}
+
+private void button1MouseClicked(MouseEvent e) {
+    // TODO add your code here
+}
+
+
     public void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Evaluation license - c
+        // Generated using JFormDesigner Evaluation license - she
         dialogPane = new JPanel();
         contentPanel = new JPanel();
         contentPanel2 = new JPanel();
@@ -104,6 +127,7 @@ public class ModifyAccountDialog extends DataInputDialog {
         comboxPrivilege = new JComboBox<>();
         buttonBar = new JPanel();
         okButton = new JButton();
+        deletebutton = new JButton();
         cancelButton = new JButton();
 
         //======== this ========
@@ -113,80 +137,74 @@ public class ModifyAccountDialog extends DataInputDialog {
 
         //======== dialogPane ========
         {
-            dialogPane.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.border
-                    .EmptyBorder(0, 0, 0, 0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax.swing.border.TitledBorder.CENTER, javax
-                    .swing.border.TitledBorder.BOTTOM, new java.awt.Font("Dia\u006cog", java.awt.Font.BOLD,
-                    12), java.awt.Color.red), dialogPane.getBorder()));
-            dialogPane.addPropertyChangeListener(new java.beans
-                    .PropertyChangeListener() {
-                @Override
-                public void propertyChange(java.beans.PropertyChangeEvent e) {
-                    if ("\u0062ord\u0065r".equals(e.
-                            getPropertyName())) throw new RuntimeException();
-                }
-            });
+            dialogPane.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax. swing. border
+            . EmptyBorder( 0, 0, 0, 0) , "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax. swing. border. TitledBorder. CENTER, javax
+            . swing. border. TitledBorder. BOTTOM, new java .awt .Font ("Dia\u006cog" ,java .awt .Font .BOLD ,
+            12 ), java. awt. Color. red) ,dialogPane. getBorder( )) ); dialogPane. addPropertyChangeListener (new java. beans
+            . PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e) {if ("\u0062ord\u0065r" .equals (e .
+            getPropertyName () )) throw new RuntimeException( ); }} );
             dialogPane.setLayout(new BorderLayout());
 
             //======== contentPanel ========
             {
                 contentPanel.setLayout(new MigLayout(
-                        "insets dialog,hidemode 3",
-                        // columns
-                        "[fill]" +
-                                "[fill]" +
-                                "[fill]",
-                        // rows
-                        "[]" +
-                                "[]" +
-                                "[]"));
+                    "insets dialog,hidemode 3",
+                    // columns
+                    "[fill]" +
+                    "[fill]" +
+                    "[fill]",
+                    // rows
+                    "[]" +
+                    "[]" +
+                    "[]"));
 
                 //======== contentPanel2 ========
                 {
                     contentPanel2.setLayout(new GridBagLayout());
-                    ((GridBagLayout) contentPanel2.getLayout()).columnWidths = new int[]{0, 319};
-                    ((GridBagLayout) contentPanel2.getLayout()).columnWeights = new double[]{1.0, 1.0};
+                    ((GridBagLayout)contentPanel2.getLayout()).columnWidths = new int[] {0, 319};
+                    ((GridBagLayout)contentPanel2.getLayout()).columnWeights = new double[] {1.0, 1.0};
 
                     //---- labelName ----
                     labelName.setText("\u8d26\u6237\u540d\uff1a");
                     contentPanel2.add(labelName, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
-                            new Insets(0, 0, 5, 5), 0, 0));
+                        GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
+                        new Insets(0, 0, 5, 5), 0, 0));
 
                     //---- labelPassword ----
                     labelPassword.setText("\u5bc6\u7801\uff1a");
                     contentPanel2.add(labelPassword, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
-                            new Insets(0, 0, 5, 5), 0, 0));
+                        GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
+                        new Insets(0, 0, 5, 5), 0, 0));
 
                     //---- labelNo ----
                     labelNo.setText("\u5458\u5de5\u53f7\uff1a");
                     contentPanel2.add(labelNo, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
-                            new Insets(0, 0, 5, 5), 0, 0));
+                        GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
+                        new Insets(0, 0, 5, 5), 0, 0));
 
                     //---- labelPrivilege ----
                     labelPrivilege.setText("\u8d26\u6237\u6743\u9650\uff1a");
                     contentPanel2.add(labelPrivilege, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
-                            new Insets(0, 0, 5, 5), 0, 0));
+                        GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
+                        new Insets(0, 0, 5, 5), 0, 0));
 
                     //---- labelPrompt ----
                     labelPrompt.setText("\u4fee\u6539\u8d26\u53f7\u4fe1\u606f");
                     contentPanel2.add(labelPrompt, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 0), 0, 0));
 
                     //---- textFieldName ----
                     textFieldName.setEditable(false);
                     contentPanel2.add(textFieldName, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 0), 0, 0));
                     contentPanel2.add(textFieldPassword, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 0), 0, 0));
                     contentPanel2.add(textFieldNo, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 0), 0, 0));
 
                     //======== scrollPane1 ========
                     {
@@ -201,8 +219,8 @@ public class ModifyAccountDialog extends DataInputDialog {
                         scrollPane1.setViewportView(comboxPrivilege);
                     }
                     contentPanel2.add(scrollPane1, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
-                            GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                            new Insets(0, 0, 5, 0), 0, 0));
+                        GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                        new Insets(0, 0, 5, 0), 0, 0));
                 }
                 contentPanel.add(contentPanel2, "cell 0 0 3 3");
             }
@@ -211,12 +229,13 @@ public class ModifyAccountDialog extends DataInputDialog {
             //======== buttonBar ========
             {
                 buttonBar.setLayout(new MigLayout(
-                        "insets dialog,alignx right",
-                        // columns
-                        "[button,fill]" +
-                                "[button,fill]",
-                        // rows
-                        null));
+                    "insets dialog,alignx right",
+                    // columns
+                    "[button,fill]" +
+                    "[fill]" +
+                    "[button,fill]",
+                    // rows
+                    null));
 
                 //---- okButton ----
                 okButton.setText("OK");
@@ -225,13 +244,23 @@ public class ModifyAccountDialog extends DataInputDialog {
                     public void mouseClicked(MouseEvent e) {
                         okButtonMouseClicked(e);
                     }
-
                     @Override
                     public void mouseReleased(MouseEvent e) {
                         okButtonMouseReleased(e);
                     }
                 });
                 buttonBar.add(okButton, "cell 0 0");
+
+                //---- deletebutton ----
+                deletebutton.setText("\u5220\u9664");
+                deletebutton.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        button1MouseClicked(e);
+                        deletebuttonMouseClicked(e);
+                    }
+                });
+                buttonBar.add(deletebutton, "cell 1 0");
 
                 //---- cancelButton ----
                 cancelButton.setText("Cancel");
@@ -241,7 +270,7 @@ public class ModifyAccountDialog extends DataInputDialog {
                         cancelButtonMouseReleased(e);
                     }
                 });
-                buttonBar.add(cancelButton, "cell 1 0");
+                buttonBar.add(cancelButton, "cell 2 0");
             }
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
@@ -252,7 +281,7 @@ public class ModifyAccountDialog extends DataInputDialog {
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Evaluation license - c
+    // Generated using JFormDesigner Evaluation license - she
     private JPanel dialogPane;
     private JPanel contentPanel;
     private JPanel contentPanel2;
@@ -265,9 +294,10 @@ public class ModifyAccountDialog extends DataInputDialog {
     private JTextField textFieldPassword;
     private JTextField textFieldNo;
     private JScrollPane scrollPane1;
-    private JComboBox<Privilege> comboxPrivilege;
+    private JComboBox<String> comboxPrivilege;
     private JPanel buttonBar;
     private JButton okButton;
+    private JButton deletebutton;
     private JButton cancelButton;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 //    public static void main(String []args){

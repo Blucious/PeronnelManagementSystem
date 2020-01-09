@@ -1,5 +1,6 @@
 package PMS.db.util;
 
+import javax.swing.*;
 import java.sql.*;
 
 /*
@@ -55,8 +56,13 @@ public abstract class MySqlUtil {
             conn = DriverManager.getConnection(
                     URL, USER_NAME, USER_PASSWORD); // 建立连接
         } catch (SQLException e) {
-            System.out.println("数据库链接异常");
-            e.printStackTrace();
+            JOptionPane.showMessageDialog(null,
+                    "数据库连接失败", "错误", JOptionPane.ERROR_MESSAGE);
+            System.out.println("数据库连接失败");
+            System.exit(-1);
+//            System.out.println("数据库链接异常");
+//            e.printStackTrace();
+//            System.exit(-1);
         }
         return conn;
     }

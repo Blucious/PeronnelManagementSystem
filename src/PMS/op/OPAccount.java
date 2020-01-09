@@ -48,7 +48,7 @@ public abstract class OPAccount {
                 PasswordUtil.EvaluationResult er = PasswordUtil.evaluatePwd(passwordPlaintext);
                 if (er.score >= 50) {
                     // 先前必须不存在相同的账户名
-                    if (DBAccount.get(name) != null) {
+                    if (DBAccount.get(name) == null) {
                         r.state = true;
                         r.message = "合法";
                     } else {

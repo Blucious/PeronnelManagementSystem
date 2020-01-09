@@ -20,12 +20,12 @@ public class DBEmployee {
     //添加员工
     public static boolean add(Employee e) {
         String sql = "INSERT INTO employee "
-                + "(empNo,empName,empBirthday,empDepNo,empTitle,empClockingIn) "
-                + "VALUES (?,?,?,?,?,?)";
+                + "(empNo,empName,empBirthday,empDepNo,empTitle) "
+                + "VALUES (?,?,?,?,?)";
 
         DBAccessUtil.UpdateResult ur = DBAccessUtil.updateWrapped(sql,
                 e.getNo(), e.getName(), e.getBirthday(),
-                e.getDepNo(), e.getTitle(), e.getClockingIn());
+                e.getDepNo(), e.getTitle());
         if (ur.exception != null) {
             ur.exception.printStackTrace();
         }
@@ -48,12 +48,11 @@ public class DBEmployee {
      */
     public static boolean update(String no, Employee e) {
         String sql = "UPDATE employee " +
-                "SET empNo=?, empName=?, empBirthday=?, empDepNo=?, " +
-                "empTitle=?, empClockingIn=? " +
+                "SET empNo=?, empName=?, empBirthday=?, empDepNo=?, empTitle=? " +
                 "WHERE empNo=?";
         DBAccessUtil.UpdateResult ur = DBAccessUtil.updateWrapped(sql,
                 e.getNo(), e.getName(), e.getBirthday(),
-                e.getDepNo(), e.getTitle(), e.getClockingIn(), no);
+                e.getDepNo(), e.getTitle(), no);
         if (ur.exception != null) {
             ur.exception.printStackTrace();
         }
@@ -72,7 +71,6 @@ public class DBEmployee {
                 emp.setBirthday(rs.getDate(3));
                 emp.setDepNo(rs.getString(4));
                 emp.setTitle(rs.getString(5));
-                emp.setClockingIn(rs.getInt(6));
             }
             return emp;
         };
@@ -85,27 +83,38 @@ public class DBEmployee {
         return (Employee) qr.result;
     }
 
-    //查询表中的所有记录（管理员），返回迭代器对象
+    public static ResultSetHandler rshMultiple = (ResultSet rs) -> {
+        List<Employee> l = new LinkedList<>();
+        Employee e = null;
+        while (rs.next()) { // 因为员工no是惟一的，所以只返回一个结果既可
+            e = new Employee();
+            e.setNo(rs.getString(1));
+            e.setName(rs.getString(2));
+            e.setBirthday(rs.getDate(3));
+            e.setDepNo(rs.getString(4));
+            e.setTitle(rs.getString(5));
+            l.add(e);
+        }
+        return l;
+    };
+
+    // 查询表中的所有记录（管理员），返回迭代器对象
     @SuppressWarnings("unchecked cast")
     public static Iterator<Employee> getAll() {
         String sql = "SELECT * FROM employee";
-        ResultSetHandler rsh = (ResultSet rs) -> {
-            List<Employee> l = new LinkedList<>();
-            Employee e = null;
-            while (rs.next()) { // 因为员工no是惟一的，所以只返回一个结果既可
-                e = new Employee();
-                e.setNo(rs.getString(1));
-                e.setName(rs.getString(2));
-                e.setBirthday(rs.getDate(3));
-                e.setDepNo(rs.getString(4));
-                e.setTitle(rs.getString(5));
-                e.setClockingIn(rs.getInt(6));
-                l.add(e);
-            }
-            return l;
-        };
+        DBAccessUtil.QueryResult qr = DBAccessUtil.queryWrapped(sql, rshMultiple);
+        if (qr.exception != null) {
+            qr.exception.printStackTrace();
+        }
 
-        DBAccessUtil.QueryResult qr = DBAccessUtil.queryWrapped(sql, rsh);
+        return ((List<Employee>) qr.result).iterator();
+    }
+
+    @SuppressWarnings("unchecked cast")
+    public static Iterator<Employee> getByPrivilege(String privilege) {
+        String sql = "SELECT * FROM employee JOIN account ON (empNo=accEmpNo) " +
+                "WHERE accPrivilege=?";
+        DBAccessUtil.QueryResult qr = DBAccessUtil.queryWrapped(sql, rshMultiple, privilege);
         if (qr.exception != null) {
             qr.exception.printStackTrace();
         }
@@ -123,7 +132,7 @@ public class DBEmployee {
 
         Employee newEmp = new Employee(
                 "e310", "张三", Date.valueOf("1998-5-4"),
-                "1001", "员工", 2);
+                "1001", "员工");
 
         System.out.println("增加+查询：");
         add(newEmp);
@@ -131,8 +140,8 @@ public class DBEmployee {
 
         System.out.println("修改+查询：");
         update("e310", new Employee(
-                        "e310", "李四", Date.valueOf("1998-5-4"),
-                        "1001", "员工", 2));
+                "e310", "李四", Date.valueOf("1998-5-4"),
+                "1001", "员工"));
         System.out.println(get("e310"));
 
         System.out.println("删除+查询全部：");

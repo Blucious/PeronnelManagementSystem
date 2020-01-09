@@ -3,10 +3,59 @@ JFDML JFormDesigner: "7.0.0.6.255" Java: "11.0.4" encoding: "UTF-8"
 new FormModel {
 	contentType: "form/swing"
 	root: new FormRoot {
-		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class javax.swing.BoxLayout ) {
-			"axis": 0
+		add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
+			"$columnSpecs": "left:0, left:55, 0, left:0:1.0"
+			"$rowSpecs": "center:0, center:0, 0, 0:1.0, 0:1.0, 0"
+			"$alignTop": true
+			"$alignLeft": true
+			"$hGap": 5
+			"$vGap": 5
 		} ) {
 			name: "this"
+			add( new FormComponent( "javax.swing.JButton" ) {
+				name: "buttonSendMessage"
+				"text": "发送消息"
+				addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "buttonSendMessageMouseReleased", true ) )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) )
+			add( new FormComponent( "javax.swing.JSeparator" ) {
+				name: "separator1"
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 1
+				"gridwidth": 4
+			} )
+			add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.FlowLayout ) {
+				"vgap": 0
+				"alignment": 0
+				"alignOnBaseline": true
+				"hgap": 0
+			} ) {
+				name: "panel1"
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "buttonRefresh"
+					"text": "刷新"
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "buttonRefreshMouseReleased", true ) )
+				} )
+				add( new FormComponent( "javax.swing.JButton" ) {
+					name: "buttonDelete"
+					"text": "删除"
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "buttonDeleteMouseClicked", true ) )
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 2
+				"gridwidth": 2
+			} )
+			add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
+				name: "scrollPane1"
+				add( new FormComponent( "javax.swing.JTable" ) {
+					name: "tableReceivedMessage"
+					"autoCreateRowSorter": true
+					addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "tableReceivedMessageMouseReleased", true ) )
+				} )
+			}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+				"gridy": 3
+				"gridheight": 3
+				"gridwidth": 4
+			} )
 		}, new FormLayoutConstraints( null ) {
 			"location": new java.awt.Point( 0, 0 )
 			"size": new java.awt.Dimension( 400, 300 )

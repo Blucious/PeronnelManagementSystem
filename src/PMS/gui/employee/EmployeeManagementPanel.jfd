@@ -10,7 +10,7 @@ new FormModel {
 			} ) {
 				name: "panel1"
 				add( new FormContainer( "javax.swing.JPanel", new FormLayoutManager( class java.awt.GridBagLayout ) {
-					"$columnSpecs": "5, 0, 0, 0, 0, 115"
+					"$columnSpecs": "5, 0, 0, 0, 0, 0"
 					"$rowSpecs": "5, 0, 5"
 					"$hGap": 5
 					"$vGap": 5
@@ -22,7 +22,7 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JButton" ) {
 						name: "buttonAdd"
 						"text": "添加"
-						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "button1MouseReleased", true ) )
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "buttonAddMouseReleased", true ) )
 					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
 						"gridx": 1
 						"gridy": 1
@@ -43,6 +43,14 @@ new FormModel {
 						"gridx": 3
 						"gridy": 1
 					} )
+					add( new FormComponent( "javax.swing.JButton" ) {
+						name: "buttonModifyClockingIn"
+						"text": "修改考勤时间"
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "buttonModifyClockingInMouseReleased", true ) )
+					}, new FormLayoutConstraints( class com.jformdesigner.runtime.GridBagConstraintsEx ) {
+						"gridx": 4
+						"gridy": 1
+					} )
 				} )
 				add( new FormContainer( "javax.swing.JScrollPane", new FormLayoutManager( class javax.swing.JScrollPane ) ) {
 					name: "scrollPane"
@@ -51,6 +59,7 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JTable" ) {
 						name: "tableEmployee"
 						"maximumSize": sfield com.jformdesigner.model.FormObject NULL_VALUE
+						"selectionMode": 0
 						auxiliary() {
 							"model.noCode": true
 						}

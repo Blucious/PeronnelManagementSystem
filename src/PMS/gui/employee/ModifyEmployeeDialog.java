@@ -10,15 +10,15 @@ import PMS.entity.Department;
 import PMS.entity.Employee;
 import PMS.entity.Title;
 import PMS.gui.com.DataInputDialog;
+import PMS.gui.model.ComboBoxModelDepartment;
+import PMS.gui.model.ComboBoxModelTitle;
+import PMS.op.OPEmployee;
 
 import javax.swing.*;
-import javax.swing.border.CompoundBorder;
 import javax.swing.border.EmptyBorder;
-import javax.swing.border.TitledBorder;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.sql.Date;
 import java.util.Iterator;
 
 /**
@@ -26,198 +26,140 @@ import java.util.Iterator;
  */
 public class ModifyEmployeeDialog extends DataInputDialog {
 
-    public ModifyEmployeeDialog(Window owner) {
-        super(owner);
+    private Employee empOriginal;
+    private ComboBoxModelDepartment comboBoxModelDepartment;
+    private ComboBoxModelTitle comboBoxModelTitle;
+
+    public ModifyEmployeeDialog(Employee emp) {
         initComponents();
 
-        // 初始化
-        Iterator<Department> iterator = DBDepartment.getAll();
-        while (iterator.hasNext()) {
-            Department d = iterator.next();
-            comboBoxEmpDeptNo.addItem(d);
-        }
-        Iterator<Title> iterator1 = DBTitle.getAll();
-        while(iterator1.hasNext()){
-            Title title =iterator1.next();
-            comboBoxEmpTitle.addItem(title);
-        }
-    }
-    public ModifyEmployeeDialog(Window owner, String info){
-        super(owner);
-        initComponents();
+        empOriginal = emp;
+        // 控件值初始化
 
-        // 初始化
-        Iterator<Department> iterator = DBDepartment.getAll();
-        while (iterator.hasNext()) {
-            Department d = iterator.next();
-            comboBoxEmpDeptNo.addItem(d);
-        }
-        Iterator<Title> iterator1 = DBTitle.getAll();
-        while(iterator1.hasNext()){
-            Title title =iterator1.next();
-            comboBoxEmpTitle.addItem(title);
-        }
-        textFieldEmpNo.setText(info);
+        textFieldEmpNo.setText(emp.getNo()); // 设置名字原始值
+        textFieldEmpName.setText(emp.getName()); // 设置名字原始值
+        textFieldEmpBirthday.setText(emp.getBirthdayString()); // 设置名字原始值
+
+        // 设置部门可选值
+        Iterator<Department> itDept = DBDepartment.getAll();
+        comboBoxModelDepartment = new ComboBoxModelDepartment(itDept);
+        comboBoxEmpDeptNo.setModel(comboBoxModelDepartment);
+        comboBoxModelDepartment.setSelectedItemByNo(emp.getDepNo()); // 设置部门原始值
+
+        // 设置头衔可选值
+        Iterator<Title> itTitle = DBTitle.getAll();
+        comboBoxModelTitle = new ComboBoxModelTitle(itTitle);
+        comboBoxEmpTitle.setModel(comboBoxModelTitle);
+        comboBoxModelTitle.setSelectedItemByName(emp.getTitle()); // 设置头衔原始值
     }
 
-//    private Employee getData() {
-//        Employee e = new Employee();
-//        try {
-//            e.setNo(textFieldEmpNo.getText());
-//            e.setName(textFieldEmpName.getText());
-//            e.setBirthday(Date.valueOf(textFieldEmpBirthday.getText()));
-//            e.setDepNo(((Department)comboBoxEmpDeptNo.getSelectedItem()).getNo());
-//            e.setTitle(((Title) comboBoxEmpTitle.getSelectedItem()).getName());
-//            e.setClockingIn(Integer.valueOf(textFieldEmpClockingIn.getText()));
-//
-//        }catch (IllegalArgumentException ex){
-//                System.out.println("不合法的参数异常");
-//        }
-//
-//        return e;
-//    }
+    private void okButtonMouseClicked(MouseEvent e) {
+        String no = textFieldEmpNo.getText();
+        String name = textFieldEmpName.getText();
+        String birthdayString = textFieldEmpBirthday.getText();
+        String depNo = comboBoxModelDepartment.getOriginalSelectedItem().getNo();
+        String title = comboBoxModelTitle.getOriginalSelectedItem().getName();
 
-    private void okButtonMouseReleased(MouseEvent e) {
-        Employee emp = new Employee();
-        emp.setNo(textFieldEmpNo.getText());
-        emp.setName(textFieldEmpName.getText());
-
-        try {
-            emp.setBirthday(Date.valueOf(textFieldEmpBirthday.getText()));
-        } catch (IllegalArgumentException exception) {
-            JOptionPane.showMessageDialog(this, "日期格式错误，应为yyyy-m[m]-d[d]",
-                    "格式错误", JOptionPane.ERROR_MESSAGE);
-            // 发生异常后，则直接退出事件。不关闭对话框，再次等待用户输入
-            return;
-        }
-        emp.setDepNo(((Department) comboBoxEmpDeptNo.getSelectedItem()).getNo());
-
-        emp.setTitle(((Title) comboBoxEmpTitle.getSelectedItem()).getName());
-        emp.setClockingIn(Integer.parseInt(textFieldEmpClockingIn.getText()));
+        Employee newEmp = OPEmployee.modifyIsValid(empOriginal,
+                no, name, birthdayString, depNo, title);
 
         // 设置要返回的数据
-        setInputData(emp);
+        setInputData(newEmp);
 
         // 设置窗口为不可见，从而使调用者停止阻塞
         this.setVisible(false);
     }
 
-
-    private void cancelButtonMouseReleased(MouseEvent e) {
+    private void cancelButtonMouseClicked(MouseEvent e) {
         this.setVisible(false);
-    }
-
-    private void okButtonMouseClicked(MouseEvent e) {
-        // TODO add your code here
     }
 
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Evaluation license - she
+        // Generated using JFormDesigner Evaluation license - c
         dialogPane = new JPanel();
         contentPanel = new JPanel();
-        label7 = new JLabel();
         label1 = new JLabel();
         label2 = new JLabel();
         label3 = new JLabel();
         label4 = new JLabel();
         label5 = new JLabel();
-        textFieldEmpClockingIn = new JTextField();
-        comboBoxEmpTitle = new JComboBox();
+        comboBoxEmpTitle = new JComboBox<>();
         comboBoxEmpDeptNo = new JComboBox<>();
         textFieldEmpBirthday = new JTextField();
         textFieldEmpName = new JTextField();
         textFieldEmpNo = new JTextField();
-        label6 = new JLabel();
         buttonBar = new JPanel();
         okButton = new JButton();
         cancelButton = new JButton();
 
         //======== this ========
         setModal(true);
+        setTitle("\u4fee\u6539\u5458\u5de5\u4fe1\u606f");
         Container contentPane = getContentPane();
         contentPane.setLayout(new BorderLayout());
 
         //======== dialogPane ========
         {
             dialogPane.setBorder(new EmptyBorder(12, 12, 12, 12));
-            dialogPane.setBorder (new CompoundBorder( new TitledBorder (
-            new EmptyBorder( 0, 0, 0, 0) , "JF\u006frm\u0044es\u0069gn\u0065r \u0045va\u006cua\u0074io\u006e"
-            , TitledBorder. CENTER, TitledBorder. BOTTOM
-            , new Font ("D\u0069al\u006fg" , Font .BOLD ,12 )
-            , Color. red) ,dialogPane. getBorder( )) ); dialogPane. addPropertyChangeListener (
-            new java. beans. PropertyChangeListener( ){ @Override public void propertyChange (java .beans .PropertyChangeEvent e
-            ) {if ("\u0062or\u0064er" .equals (e .getPropertyName () )) throw new RuntimeException( )
-            ; }} );
+            dialogPane.setBorder (new javax. swing. border. CompoundBorder( new javax .swing .border .TitledBorder (new javax
+            . swing. border. EmptyBorder( 0, 0, 0, 0) , "JF\u006frmDesi\u0067ner Ev\u0061luatio\u006e", javax. swing
+            . border. TitledBorder. CENTER, javax. swing. border. TitledBorder. BOTTOM, new java .awt .
+            Font ("Dialo\u0067" ,java .awt .Font .BOLD ,12 ), java. awt. Color. red
+            ) ,dialogPane. getBorder( )) ); dialogPane. addPropertyChangeListener (new java. beans. PropertyChangeListener( ){ @Override
+            public void propertyChange (java .beans .PropertyChangeEvent e) {if ("borde\u0072" .equals (e .getPropertyName (
+            ) )) throw new RuntimeException( ); }} );
             dialogPane.setLayout(new BorderLayout());
 
             //======== contentPanel ========
             {
                 contentPanel.setLayout(new GridBagLayout());
-                ((GridBagLayout)contentPanel.getLayout()).columnWeights = new double[] {1.0, 1.0};
-
-                //---- label7 ----
-                label7.setText("\u8f93\u5165\u5458\u5de5\u8be6\u7ec6\u4fe1\u606f\u3002");
-                contentPanel.add(label7, new GridBagConstraints(0, 0, 2, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 5, 0), 0, 0));
+                ((GridBagLayout)contentPanel.getLayout()).columnWidths = new int[] {0, 250};
 
                 //---- label1 ----
-                label1.setText("empNo\uff1a");
-                contentPanel.add(label1, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
+                label1.setText("\u5458\u5de5\u53f7\uff1a");
+                contentPanel.add(label1, new GridBagConstraints(0, 0, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
                     new Insets(0, 0, 5, 5), 0, 0));
 
                 //---- label2 ----
-                label2.setText("empName\uff1a");
-                contentPanel.add(label2, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
+                label2.setText("\u5458\u5de5\u59d3\u540d\uff1a");
+                contentPanel.add(label2, new GridBagConstraints(0, 1, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
                     new Insets(0, 0, 5, 5), 0, 0));
 
                 //---- label3 ----
-                label3.setText("empBirthday\uff1a");
-                contentPanel.add(label3, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
+                label3.setText("\u5458\u5de5\u751f\u65e5\uff1a");
+                contentPanel.add(label3, new GridBagConstraints(0, 2, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
                     new Insets(0, 0, 5, 5), 0, 0));
 
                 //---- label4 ----
-                label4.setText("empDeptNo\uff1a");
-                contentPanel.add(label4, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
+                label4.setText("\u5458\u5de5\u6240\u5c5e\u90e8\u95e8\uff1a");
+                contentPanel.add(label4, new GridBagConstraints(0, 3, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
                     new Insets(0, 0, 5, 5), 0, 0));
 
                 //---- label5 ----
-                label5.setText("empTitle\uff1a");
-                contentPanel.add(label5, new GridBagConstraints(0, 5, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
-                    new Insets(0, 0, 5, 5), 0, 0));
-
-                //---- textFieldEmpClockingIn ----
-                textFieldEmpClockingIn.setText("0");
-                contentPanel.add(textFieldEmpClockingIn, new GridBagConstraints(1, 6, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 0, 0), 0, 0));
-                contentPanel.add(comboBoxEmpTitle, new GridBagConstraints(1, 5, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 5, 0), 0, 0));
-                contentPanel.add(comboBoxEmpDeptNo, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 5, 0), 0, 0));
-                contentPanel.add(textFieldEmpBirthday, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 5, 0), 0, 0));
-                contentPanel.add(textFieldEmpName, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 5, 0), 0, 0));
-                contentPanel.add(textFieldEmpNo, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
-                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
-                    new Insets(0, 0, 5, 0), 0, 0));
-
-                //---- label6 ----
-                label6.setText("empClockingIn\uff1a");
-                contentPanel.add(label6, new GridBagConstraints(0, 6, 1, 1, 0.0, 0.0,
+                label5.setText("\u5458\u5de5\u5934\u8854\uff1a");
+                contentPanel.add(label5, new GridBagConstraints(0, 4, 1, 1, 0.0, 0.0,
                     GridBagConstraints.WEST, GridBagConstraints.VERTICAL,
                     new Insets(0, 0, 0, 5), 0, 0));
+                contentPanel.add(comboBoxEmpTitle, new GridBagConstraints(1, 4, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 0, 0), 0, 0));
+                contentPanel.add(comboBoxEmpDeptNo, new GridBagConstraints(1, 3, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 5, 0), 0, 0));
+                contentPanel.add(textFieldEmpBirthday, new GridBagConstraints(1, 2, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 5, 0), 0, 0));
+                contentPanel.add(textFieldEmpName, new GridBagConstraints(1, 1, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 5, 0), 0, 0));
+                contentPanel.add(textFieldEmpNo, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
+                    GridBagConstraints.CENTER, GridBagConstraints.BOTH,
+                    new Insets(0, 0, 5, 0), 0, 0));
             }
             dialogPane.add(contentPanel, BorderLayout.CENTER);
 
@@ -229,17 +171,11 @@ public class ModifyEmployeeDialog extends DataInputDialog {
                 ((GridBagLayout)buttonBar.getLayout()).columnWeights = new double[] {1.0, 0.0, 0.0};
 
                 //---- okButton ----
-                okButton.setText("OK");
+                okButton.setText("\u4fee\u6539");
                 okButton.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseClicked(MouseEvent e) {
                         okButtonMouseClicked(e);
-                        okButtonMouseClicked(e);
-                        okButtonMouseClicked(e);
-                    }
-                    @Override
-                    public void mouseReleased(MouseEvent e) {
-                        okButtonMouseReleased(e);
                     }
                 });
                 buttonBar.add(okButton, new GridBagConstraints(1, 0, 1, 1, 0.0, 0.0,
@@ -247,11 +183,11 @@ public class ModifyEmployeeDialog extends DataInputDialog {
                     new Insets(0, 0, 0, 5), 0, 0));
 
                 //---- cancelButton ----
-                cancelButton.setText("Cancel");
+                cancelButton.setText("\u53d6\u6d88");
                 cancelButton.addMouseListener(new MouseAdapter() {
                     @Override
-                    public void mouseReleased(MouseEvent e) {
-                        cancelButtonMouseReleased(e);
+                    public void mouseClicked(MouseEvent e) {
+                        cancelButtonMouseClicked(e);
                     }
                 });
                 buttonBar.add(cancelButton, new GridBagConstraints(2, 0, 1, 1, 0.0, 0.0,
@@ -261,28 +197,25 @@ public class ModifyEmployeeDialog extends DataInputDialog {
             dialogPane.add(buttonBar, BorderLayout.SOUTH);
         }
         contentPane.add(dialogPane, BorderLayout.CENTER);
-        setSize(535, 375);
+        setSize(455, 320);
         setLocationRelativeTo(null);
         // JFormDesigner - End of component initialization  //GEN-END:initComponents
     }
 
     // JFormDesigner - Variables declaration - DO NOT MODIFY  //GEN-BEGIN:variables
-    // Generated using JFormDesigner Evaluation license - she
+    // Generated using JFormDesigner Evaluation license - c
     private JPanel dialogPane;
     private JPanel contentPanel;
-    private JLabel label7;
     private JLabel label1;
     private JLabel label2;
     private JLabel label3;
     private JLabel label4;
     private JLabel label5;
-    private JTextField textFieldEmpClockingIn;
-    private JComboBox comboBoxEmpTitle;
-    private JComboBox<Department> comboBoxEmpDeptNo;
+    private JComboBox<String> comboBoxEmpTitle;
+    private JComboBox<String> comboBoxEmpDeptNo;
     private JTextField textFieldEmpBirthday;
     private JTextField textFieldEmpName;
     private JTextField textFieldEmpNo;
-    private JLabel label6;
     private JPanel buttonBar;
     private JButton okButton;
     private JButton cancelButton;
