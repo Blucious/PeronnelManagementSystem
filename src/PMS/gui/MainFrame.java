@@ -7,7 +7,6 @@ package PMS.gui;
 import PMS.client.Client;
 import PMS.db.DBClockingIn;
 import PMS.db.DBClockinginTime;
-import PMS.db.util.DBAccessUtil;
 import PMS.db.util.MySqlUtil;
 import PMS.entity.Account;
 import PMS.entity.ClockingIn;
@@ -17,7 +16,10 @@ import PMS.db.DBEmployee;
 import PMS.gui.department.DepartmentManagementPanel;
 import PMS.gui.employee.EmployeeManagementPanel;
 import PMS.gui.employee.EmployeeInterfacePanel;
+import PMS.gui.account.ModifyAccountDialog;
 import PMS.gui.message.MessagePanel;
+import PMS.gui.help.HelpDialog;
+
 
 import java.awt.*;
 import java.awt.event.*;
@@ -25,7 +27,6 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import javax.swing.*;
 
-import PMS.gui.account.ModifyAccountDialog;
 
 
 /**
@@ -119,7 +120,7 @@ public class MainFrame extends JFrame {
     }
 
     //打卡
-    private void menuItem3MouseReleased(MouseEvent e) throws SQLException {
+    private void menuItem3MouseReleased(MouseEvent e) {
         ClockingIn clockingIn = new ClockingIn();
         clockingIn.setCleno(accCurr.getEmpNo());
         clockingIn.setCldatetime(Timestamp.valueOf(LocalDateTime.now()));
@@ -132,21 +133,24 @@ public class MainFrame extends JFrame {
         }
 
         String SQL = "SELECT * FROM  clockingin WHERE DATE(Cldatetime)=? AND Cleno=?";
-        PreparedStatement temp = MySqlUtil.prepareStatement(SQL);
-        temp.setString(1, clockingIn.getCldatetime().toString().substring(0, 10));
-        temp.setString(2, accCurr.getEmpNo());
-        ResultSet resultSet = temp.executeQuery();
+        try {
+            PreparedStatement temp = MySqlUtil.prepareStatement(SQL);
+            temp.setString(1, clockingIn.getCldatetime().toString().substring(0, 10));
+            temp.setString(2, accCurr.getEmpNo());
+            ResultSet resultSet = temp.executeQuery();
 
 
-        if (!resultSet.next()) {
-            DBClockingIn.add(clockingIn);
+            if (!resultSet.next()) {
+                DBClockingIn.add(clockingIn);
 //            DBAccessUtil.updateWrapped("UPDATE EMPLOYEE SET empClockingIn=empClockingIn +1 WHERE empNo=?", clockingIn.getCleno());
-            JOptionPane.showMessageDialog(
-                    this, "你好" + accCurr.getName() + "，考勤状态：" + clockingIn.getClstatus(), "打卡成功", JOptionPane.ERROR_MESSAGE);
+                JOptionPane.showMessageDialog(this,
+                        "你好" + accCurr.getName() + "，考勤状态：" + clockingIn.getClstatus(), "打卡成功", JOptionPane.ERROR_MESSAGE);
+            } else {
+                JOptionPane.showMessageDialog(this,
+                        "本日已打卡，请勿重复打卡", "打卡失败", JOptionPane.ERROR_MESSAGE);
+            }
             employeeInterfacePanel.refresh(accCurr.getEmpNo());
-        } else {
-            JOptionPane.showMessageDialog(this,
-                    "本日已打卡，请勿重复打卡", "打卡失败", JOptionPane.ERROR_MESSAGE);
+        } catch (SQLException ignored) {
         }
     }
 
@@ -162,17 +166,27 @@ public class MainFrame extends JFrame {
 
     }
 
+    private void menuItemHelpMouseClicked(MouseEvent e) {
+    }
+
+    private void menuItemHelpMouseReleased(MouseEvent e) {
+        HelpDialog hd = new HelpDialog(this);
+        hd.setVisible(true);
+        hd.dispose();
+    }
+
+
+
     private void initComponents() {
         // JFormDesigner - Component initialization - DO NOT MODIFY  //GEN-BEGIN:initComponents
-        // Generated using JFormDesigner Evaluation license - she
+        // Generated using JFormDesigner Evaluation license - c
         menuBar = new JMenuBar();
         menuAccount = new JMenu();
         menuItemClockingIn = new JMenuItem();
         menuItemModifyPassword = new JMenuItem();
         menuItemExit = new JMenuItem();
         menuHelp = new JMenu();
-        menuItem2 = new JMenuItem();
-        menuItem4 = new JMenuItem();
+        menuItemHelp = new JMenuItem();
         tabbedPane = new JTabbedPane();
 
         //======== this ========
@@ -201,11 +215,7 @@ public class MainFrame extends JFrame {
                 menuItemClockingIn.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseReleased(MouseEvent e) {
-                        try {
-                            menuItem3MouseReleased(e);
-                        } catch (SQLException ex) {
-                            ex.printStackTrace();
-                        }
+                        menuItem3MouseReleased(e);
                     }
                 });
                 menuAccount.add(menuItemClockingIn);
@@ -215,7 +225,6 @@ public class MainFrame extends JFrame {
                 menuItemModifyPassword.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseReleased(MouseEvent e) {
-
                         menuItemModifyPasswordMouseReleased(e);
                     }
                 });
@@ -237,13 +246,19 @@ public class MainFrame extends JFrame {
             {
                 menuHelp.setText("\u5e2e\u52a9");
 
-                //---- menuItem2 ----
-                menuItem2.setText("\u5e2e\u52a9\u5185\u5bb9");
-                menuHelp.add(menuItem2);
-
-                //---- menuItem4 ----
-                menuItem4.setText("\u5173\u4e8e");
-                menuHelp.add(menuItem4);
+                //---- menuItemHelp ----
+                menuItemHelp.setText("\u5e2e\u52a9\u5185\u5bb9");
+                menuItemHelp.addMouseListener(new MouseAdapter() {
+                    @Override
+                    public void mouseClicked(MouseEvent e) {
+                        menuItemHelpMouseClicked(e);
+                    }
+                    @Override
+                    public void mouseReleased(MouseEvent e) {
+                        menuItemHelpMouseReleased(e);
+                    }
+                });
+                menuHelp.add(menuItemHelp);
             }
             menuBar.add(menuHelp);
         }
@@ -268,8 +283,7 @@ public class MainFrame extends JFrame {
     private JMenuItem menuItemModifyPassword;
     private JMenuItem menuItemExit;
     private JMenu menuHelp;
-    private JMenuItem menuItem2;
-    private JMenuItem menuItem4;
+    private JMenuItem menuItemHelp;
     private JTabbedPane tabbedPane;
     // JFormDesigner - End of variables declaration  //GEN-END:variables
 

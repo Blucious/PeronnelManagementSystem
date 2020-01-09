@@ -9,7 +9,7 @@ import java.sql.SQLException;
 import java.sql.Time;
 
 public class DBClockinginTime {
-    public static boolean update(Time time) throws SQLException {
+    public static boolean update(Time time) {
         String sql = "UPDATE ClockingInTime " +
                 "SET ClockingInTime =?" +
                 "WHERE ClockingInTime=?";
@@ -23,16 +23,19 @@ public class DBClockinginTime {
         return ur.state;
     }
 
-    public static Time get() throws SQLException {
+    public static Time get() {
         ResultSet resultSet;
         Time time = null;
         String sql = "select * from ClockingInTime ";
-        PreparedStatement preparedStatement = MySqlUtil.prepareStatement(sql);
-        resultSet = preparedStatement.executeQuery();
-        while (resultSet.next()) {
-            time = resultSet.getTime(1);
+        try {
+            PreparedStatement preparedStatement = MySqlUtil.prepareStatement(sql);
+            resultSet = preparedStatement.executeQuery();
+            while (resultSet.next()) {
+                time = resultSet.getTime(1);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
         }
-
         return time;
 
     }

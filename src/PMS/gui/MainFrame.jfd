@@ -1,4 +1,4 @@
-JFDML JFormDesigner: "7.0.0.6.255" Java: "11.0.3" encoding: "UTF-8"
+JFDML JFormDesigner: "7.0.0.6.255" Java: "11.0.4" encoding: "UTF-8"
 
 new FormModel {
 	contentType: "form/swing"
@@ -28,7 +28,6 @@ new FormModel {
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
 						name: "menuItemModifyPassword"
 						"text": "修改密码"
-						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "menuItem1MouseReleased", true ) )
 						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "menuItemModifyPasswordMouseReleased", true ) )
 					} )
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
@@ -41,12 +40,10 @@ new FormModel {
 					name: "menuHelp"
 					"text": "帮助"
 					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem2"
+						name: "menuItemHelp"
 						"text": "帮助内容"
-					} )
-					add( new FormComponent( "javax.swing.JMenuItem" ) {
-						name: "menuItem4"
-						"text": "关于"
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseClicked", "menuItemHelpMouseClicked", true ) )
+						addEvent( new FormEvent( "java.awt.event.MouseListener", "mouseReleased", "menuItemHelpMouseReleased", true ) )
 					} )
 				} )
 			}

@@ -154,6 +154,22 @@ public class Client implements Runnable {
         }
     }
 
+    // 消息：断开连接
+    // 不允许外部调用
+    private void sendMsgForcedDisconnect() {
+        if (bConnected.get()) {
+            try {
+                output.writeUTF("客户端因强制下线断开连接"); // 发送报文通知服务器，通知断开连接
+                output.flush(); // 必须进行刷新，否则可能在发送前连接就被关闭了
+            } catch (IOException e) {
+                printf("sendMsgForcedDisconnect发生异常：\n");
+                e.printStackTrace();
+            }
+        } else {
+            printf("未连接\n");
+        }
+    }
+
     // 消息：通知别的客户端接收消息
     public void sendMsgNotifyOtherReceiveMessage(Account receiverAcc) {
         if (bConnected.get()) {
@@ -277,13 +293,13 @@ public class Client implements Runnable {
                             if (clientForcedOfflineHandler != null) {
                                 clientForcedOfflineHandler.handler();
                             }
-                            sendMsgDisconnect();
+                            sendMsgForcedDisconnect();
                             break;
                     }
                 }
             } catch (Exception e) {
                 printf("连接已断开：%s\n", e.getMessage());
-                e.printStackTrace();
+//                e.printStackTrace();
                 // 通知输出流消息循环退出
                 stopOutputStreamMsgLoop();
             }

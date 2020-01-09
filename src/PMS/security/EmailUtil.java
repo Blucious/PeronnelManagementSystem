@@ -37,10 +37,8 @@ public class EmailUtil {
             bufferedReader.close();
         } catch (FileNotFoundException e) {
             System.out.println("找不到邮箱账户文件");
-            e.printStackTrace();
         } catch (IOException e) {
             System.out.println("邮箱账户文件读取失败");
-            e.printStackTrace();
         }
     }
 

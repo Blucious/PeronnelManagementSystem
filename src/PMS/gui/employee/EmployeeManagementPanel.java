@@ -6,19 +6,15 @@ package PMS.gui.employee;
 
 import java.awt.*;
 import java.awt.event.*;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import javax.swing.*;
 
 import PMS.db.DBAccount;
-import PMS.db.DBClockingIn;
 import PMS.db.DBEmployee;
-import PMS.db.util.MySqlUtil;
 import PMS.entity.Account;
 import PMS.entity.Employee;
 import PMS.gui.com.DataInputDialog;
 import PMS.gui.model.TableModel;
+
 
 /**
  * @author c
@@ -73,28 +69,43 @@ public class EmployeeManagementPanel extends JPanel {
     }
 
     private void buttonDeleteMouseReleased(MouseEvent e) {
-        DataInputDialog deleteEmployee = new DeleteEmployeeDialog(null);
-        deleteEmployee.setVisible(true);
-        deleteEmployee.dispose();
-        String[] deleno = String.valueOf(deleteEmployee.getInputData()).split(";");
-        ResultSet resultSet = null;
-        for (int i = 0; i < deleno.length; i++) {
-            String sql = "select accName from account where accEmpNo in (select empNo from employee where empNo ='" + deleno[i] + "')";
-            try {
+        DeleteEmployeeDialog ded = new DeleteEmployeeDialog(null);
+        ded.setVisible(true);
+        ded.dispose();
 
-                PreparedStatement ps = MySqlUtil.prepareStatement(sql);
-                resultSet = ps.executeQuery();
-                while (resultSet.next()) {
-                    DBAccount.delete(resultSet.getString(1));
-                }
-                DBClockingIn.delete(deleno[i]);
-                DBEmployee.delete(deleno[i]);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+        DeleteEmployeeDialog.Result r = (DeleteEmployeeDialog.Result) ded.getInputData();
+        if (r != null) {
+            System.out.println(r.empNoList);
+            for (String empNo: r.empNoList) {
+                // 在数据库中account表和ClockingIn表设置了级联删除，
+                // 当员工被删除时，账号和考勤记录也会被删除
+                DBEmployee.delete(empNo);
             }
-
         }
+
         refreshTable();
+
+//        deleteEmployee.setVisible(true);
+//        deleteEmployee.dispose();
+//        String[] deleno = String.valueOf(deleteEmployee.getInputData()).split(";");
+//        ResultSet resultSet = null;
+//        for (int i = 0; i < deleno.length; i++) {
+//            String sql = "select accName from account where accEmpNo in (select empNo from employee where empNo ='" + deleno[i] + "')";
+//            try {
+//
+//                PreparedStatement ps = MySqlUtil.prepareStatement(sql);
+//                resultSet = ps.executeQuery();
+//                while (resultSet.next()) {
+//                    DBAccount.delete(resultSet.getString(1));
+//                }
+//                DBClockingIn.delete(deleno[i]);
+//                DBEmployee.delete(deleno[i]);
+//            } catch (SQLException ex) {
+//                ex.printStackTrace();
+//            }
+//
+//        }
+//        refreshTable();
     }
 
     private void tableEmployeeMouseReleased(MouseEvent e) {
@@ -124,7 +135,10 @@ public class EmployeeManagementPanel extends JPanel {
 
             DBEmployee.add(emp);
             String defaultpwd = emp.getBirthday().toString().replace("-", "");
-            Account account = new Account(emp.getName(), defaultpwd, false, emp.getNo(), "普通员工");
+            Account account = new Account(
+                    emp.getName(),
+                    defaultpwd, false,
+                    emp.getNo(), "普通员工");
             DBAccount.add(account);
 
             refreshTable();
@@ -144,16 +158,17 @@ public class EmployeeManagementPanel extends JPanel {
         tableEmployee = new JTable();
 
         //======== this ========
-        setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder
-                (0, 0, 0, 0), "JF\u006frmD\u0065sig\u006eer \u0045val\u0075ati\u006fn", javax.swing.border.TitledBorder.CENTER, javax.swing.border
-                .TitledBorder.BOTTOM, new java.awt.Font("Dia\u006cog", java.awt.Font.BOLD, 12), java.awt
-                .Color.red), getBorder()));
+        setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.
+                swing.border.EmptyBorder(0, 0, 0, 0), "JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax.swing.border
+                .TitledBorder.CENTER, javax.swing.border.TitledBorder.BOTTOM, new java.awt.Font("D\u0069alog"
+                , java.awt.Font.BOLD, 12), java.awt.Color.red), getBorder
+                ()));
         addPropertyChangeListener(new java.beans.PropertyChangeListener() {
             @Override
-            public void
-            propertyChange(java.beans.PropertyChangeEvent e) {
-                if ("\u0062ord\u0065r".equals(e.getPropertyName())) throw new RuntimeException()
-                        ;
+            public void propertyChange(java
+                                               .beans.PropertyChangeEvent e) {
+                if ("\u0062order".equals(e.getPropertyName())) throw new RuntimeException
+                        ();
             }
         });
         setLayout(new BoxLayout(this, BoxLayout.X_AXIS));
@@ -229,6 +244,7 @@ public class EmployeeManagementPanel extends JPanel {
                 //---- tableEmployee ----
                 tableEmployee.setMaximumSize(null);
                 tableEmployee.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+                tableEmployee.setAutoCreateRowSorter(true);
                 tableEmployee.addMouseListener(new MouseAdapter() {
                     @Override
                     public void mouseReleased(MouseEvent e) {

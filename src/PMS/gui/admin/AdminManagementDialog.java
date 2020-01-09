@@ -8,6 +8,7 @@ import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 
+import PMS.client.Client;
 import PMS.db.DBAccount;
 import PMS.entity.Account;
 import PMS.gui.LoginFrame;
@@ -22,7 +23,8 @@ import net.miginfocom.swing.*;
  * @author she
  */
 public class AdminManagementDialog extends DataInputDialog {
-    Account account;
+    private Account account;
+    private Client client;
     private TableModel tableModelAccount;
 
     public AdminManagementDialog(Window owner, Account account) {
@@ -46,7 +48,7 @@ public class AdminManagementDialog extends DataInputDialog {
                 null, (String) tableAccount.getValueAt(row, 0), this.account);
         d.setVisible(true);
         d.dispose();
-        if(d.getInputData() instanceof Account){
+        if (d.getInputData() instanceof Account) {
             System.out.println(d.getInputData() instanceof Account);
             Account account = (Account) d.getInputData();
             if (account != null) {
@@ -57,10 +59,10 @@ public class AdminManagementDialog extends DataInputDialog {
 
             }
 
-        }else {
+        } else {
             DBAccount.delete(String.valueOf(d.getInputData()));
 
-                tableModelAccount.setQuery("SELECT * FROM account");
+            tableModelAccount.setQuery("SELECT * FROM account");
         }
 
     }
@@ -146,33 +148,39 @@ public class AdminManagementDialog extends DataInputDialog {
 
         //======== dialogPane ========
         {
-            dialogPane.setBorder ( new javax . swing. border .CompoundBorder ( new javax . swing. border .TitledBorder ( new javax . swing. border .EmptyBorder
-            ( 0, 0 ,0 , 0) ,  "JF\u006frmDes\u0069gner \u0045valua\u0074ion" , javax. swing .border . TitledBorder. CENTER ,javax . swing. border
-            .TitledBorder . BOTTOM, new java. awt .Font ( "D\u0069alog", java .awt . Font. BOLD ,12 ) ,java . awt
-            . Color .red ) ,dialogPane. getBorder () ) ); dialogPane. addPropertyChangeListener( new java. beans .PropertyChangeListener ( ){ @Override public void
-            propertyChange (java . beans. PropertyChangeEvent e) { if( "\u0062order" .equals ( e. getPropertyName () ) )throw new RuntimeException( )
-            ;} } );
+            dialogPane.setBorder(new javax.swing.border.CompoundBorder(new javax.swing.border.TitledBorder(new javax.swing.border.EmptyBorder
+                    (0, 0, 0, 0), "JF\u006frmDes\u0069gner \u0045valua\u0074ion", javax.swing.border.TitledBorder.CENTER, javax.swing.border
+                    .TitledBorder.BOTTOM, new java.awt.Font("D\u0069alog", java.awt.Font.BOLD, 12), java.awt
+                    .Color.red), dialogPane.getBorder()));
+            dialogPane.addPropertyChangeListener(new java.beans.PropertyChangeListener() {
+                @Override
+                public void
+                propertyChange(java.beans.PropertyChangeEvent e) {
+                    if ("\u0062order".equals(e.getPropertyName())) throw new RuntimeException()
+                            ;
+                }
+            });
             dialogPane.setLayout(new BorderLayout());
 
             //======== contentPanel ========
             {
                 contentPanel.setLayout(new MigLayout(
-                    "insets dialog,hidemode 3",
-                    // columns
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[82,fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]" +
-                    "[fill]",
-                    // rows
-                    "[]" +
-                    "[]" +
-                    "[]" +
-                    "[]"));
+                        "insets dialog,hidemode 3",
+                        // columns
+                        "[fill]" +
+                                "[fill]" +
+                                "[fill]" +
+                                "[fill]" +
+                                "[82,fill]" +
+                                "[fill]" +
+                                "[fill]" +
+                                "[fill]" +
+                                "[fill]",
+                        // rows
+                        "[]" +
+                                "[]" +
+                                "[]" +
+                                "[]"));
 
                 //---- labelAccountName ----
                 labelAccountName.setText("\u8d26\u6237\u540d\uff1a");
@@ -215,12 +223,12 @@ public class AdminManagementDialog extends DataInputDialog {
             //======== buttonBar ========
             {
                 buttonBar.setLayout(new MigLayout(
-                    "insets dialog,alignx right",
-                    // columns
-                    "[button,fill]" +
-                    "[button,fill]",
-                    // rows
-                    null));
+                        "insets dialog,alignx right",
+                        // columns
+                        "[button,fill]" +
+                                "[button,fill]",
+                        // rows
+                        null));
 
                 //---- okButton ----
                 okButton.setText("OK");

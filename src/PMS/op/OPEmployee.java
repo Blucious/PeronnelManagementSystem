@@ -27,6 +27,12 @@ public class OPEmployee {
                         "错误", JOptionPane.ERROR_MESSAGE);
                 return null;
             }
+        } else {
+            if (DBEmployee.get(no) != null) {
+                JOptionPane.showMessageDialog(null, "员工号已存在",
+                        "错误", JOptionPane.ERROR_MESSAGE);
+                return null;
+            }
         }
 
         // 员工名

@@ -24,27 +24,35 @@ public class EmployeeInterfacePanel extends JPanel {
 
     public EmployeeInterfacePanel(Account account) {
         initComponents();
+
         this.account = account;
         this.empNo = account.getEmpNo();
+
         tableModelemployee = new TableModel();
         Employeeinfo.setModel(tableModelemployee);
-        if (DBClockingIn.get(empNo) != null) {
 
+        if (DBClockingIn.get(empNo) != null) {
             refresh(empNo);
         } else {
-            String sql = "select empNo as'员工号', empName as'员工名' , empBirthday as'生日', empDepNo as'部门号' ,empTitle as '职称',empClockingIn as'考勤天数' from employee where empNo =?";
+            String sql = "select empNo as'员工号', empName as'员工名' , empBirthday as'生日', empDepNo as'部门号' ,empTitle as '职称' from employee where empNo =?";
             tableModelemployee.setQuery(sql, empNo);
-
-
         }
 
     }
 
     public void refresh(String empNo) {
-        String sql = "SELECT concat(year(Cldatetime), '-', month(Cldatetime))as '考勤月份', empNo as'员工号', empName as'员工名' , empBirthday as'生日', empDepNo as'部门号' ,empTitle as '职称',count(*) as'考勤天数' FROM clockingin,employee where clockingin.Cleno=employee.empNo and empNo=? group by year(Cldatetime),month(Cldatetime)";
+//        String sql = "SELECT CONCAT(YEAR(Cldatetime), '-', MONTH(Cldatetime)) 考勤月份, " +
+//                "empNo 员工号, empName 员工名, empBirthday 生日, empDepNo 部门号, empTitle 职称, " +
+//                "count(*) 考勤天数 FROM employee LEFT OUTER JOIN clockingin ON (empNo=Cleno)  " +
+//                "WHERE empNo=? " +
+//                "GROUP BY YEAR(Cldatetime), MONTH(Cldatetime)";
 
-//            String sql = "SELECT concat(year(Cldatetime), '-', month(Cldatetime))as '考勤月份', empNo as'员工号', empName as'员工名' , empBirthday as'生日', empDepNo as'部门号' ,empTitle as '职称',count(*) as'考勤天数' FROM clockingin,employee where clockingin.Cleno=employee.empNo and empNo=? group by year(Cldatetime),month(Cldatetime)";
-//            tableModelemployee = new TableModel(sql, empNo);
+        String sql = "SELECT concat(year(Cldatetime), '-', month(Cldatetime))as '考勤月份', " +
+                "empNo as'员工号', empName as'员工名' , empBirthday as'生日', " +
+                "empDepNo as'部门号' ,empTitle as '职称',count(*) as'考勤天数' " +
+                "FROM clockingin,employee " +
+                "where clockingin.Cleno=employee.empNo and empNo=? " +
+                "group by year(Cldatetime),month(Cldatetime)";
         tableModelemployee.setQuery(sql, empNo);
     }
 

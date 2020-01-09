@@ -51,6 +51,7 @@ public class LoginFrame extends JFrame {
                 return;
             }
 
+
             if (account.isAdmin()) {
                 // 启动管理员专有窗口
                 AdminManagementDialog d = new AdminManagementDialog(null, account);
@@ -58,7 +59,12 @@ public class LoginFrame extends JFrame {
             } else {
 
                 Client client = new Client(account);
-                client.startAndConnect();
+                if (!client.startAndConnect()) {
+//                JOptionPane.showMessageDialog(this,
+//                        "登录失败，连接服务器失败。", "错误", JOptionPane.ERROR_MESSAGE);
+//                // 结束事件
+//                return;
+                }
 
                 // 启动主窗口
                 MainFrame f = new MainFrame(account, client);

@@ -136,6 +136,7 @@ public class Server
             Account accCurr = null; // 用户标识对象
             input = null; // 经包装的Socket的输入流
             output = null; // 经包装的Socket的输出流
+            AtomicBoolean bForcedDisconnect = new AtomicBoolean(false);
 
             try {
                 input = new ObjectInputStream(socket.getInputStream());
@@ -162,10 +163,11 @@ public class Server
 //                                printf("【%s】连接失败，因为与其具有同一标识的客户端已经在线，Handler退出\n",
 //                                        accCurr.getName());
 //                                handlerConnectionClosing("用户已经在线");
-                                printf("【%s】从另一客户端登录，通知原来客户端强制下线", accCurr.getName());
+                                printf("【%s】从另一客户端登录，通知原来客户端强制下线\n", accCurr.getName());
                                 SocketAndStream ss = clientIdentityToSocket.get(accCurr);
                                 ss.output.writeUTF("服务端通知客户端强制下线关闭连接");
                                 ss.output.flush();
+                                clientIdentityToSocket.remove(accCurr);
                             }
                             SocketAndStream ss = new SocketAndStream(socket, input, output);
                             clientIdentityToSocket.put(accCurr, ss);
@@ -194,6 +196,12 @@ public class Server
                             handlerConnectionClosing("用户断开连接");
                             stopInputStreamMsgLoop();
                             break;
+                        case "客户端因强制下线断开连接":
+                            printf("【%s】断开连接\n", accCurr.getName());
+                            handlerConnectionClosing("用户断开连接");
+                            stopInputStreamMsgLoop();
+                            bForcedDisconnect.set(true);
+                            break;
                     }
                 }
 
@@ -208,7 +216,8 @@ public class Server
                 e.printStackTrace();
             } finally {
                 // 将用户标识从map里移除，表明该用户已下线
-                if (accCurr != null) {
+                // 如果是被强制断开连接，用户标识已经从map被移除了
+                if (accCurr != null && !bForcedDisconnect.get()) {
                     clientIdentityToSocket.remove(accCurr);
                 }
                 try {

@@ -107,8 +107,8 @@ create table message (
 	msgSendTime datetime not null      	        comment '发送日期，时间日期类型',
 	msgMessage text                             comment '消息内容',
 	primary key(msgNo, msgSenderAccName, msgReceiverAccName, msgSendTime) comment '一秒内可以发送多条消息',
-	foreign key(msgSenderAccName) references account(accName),
-	foreign key(msgSenderAccName) references account(accName)
+	foreign key(msgSenderAccName) references account(accName) on delete cascade on update cascade,
+	foreign key(msgSenderAccName) references account(accName) on delete cascade on update cascade
 ) charset=utf8;
 
 -- 测试数据
@@ -127,8 +127,14 @@ create table ClockingIn(
 	Cldatetime datetime     comment '打卡时间',
 	Clstatus nvarchar(32)   comment '打卡状态',
 	primary key(Cleno, Cldatetime),
-	foreign key(Cleno) references Employee(empNo) on delete cascade
+	foreign key(Cleno) references Employee(empNo) on delete cascade on update cascade
 ) charset=utf8;
+
+insert into ClockingIn values
+('awoawmdwdjasasawa@126.com', '2020-01-09 17:21:55', '迟到'),
+('awoawmdwdjasasawa@126.com', '2020-02-09 17:21:55', '迟到'),
+('awoawmdwdjasasawa@126.com', '2020-03-09 17:21:55', '迟到'),
+('awoawmdwdjasasawa@126.com', '2021-03-09 17:21:55', '迟到');
 
 drop table if exists ClockingInTime;
 create table ClockingInTime(

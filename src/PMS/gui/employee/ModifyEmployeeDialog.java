@@ -62,6 +62,9 @@ public class ModifyEmployeeDialog extends DataInputDialog {
 
         Employee newEmp = OPEmployee.modifyIsValid(empOriginal,
                 no, name, birthdayString, depNo, title);
+        if (newEmp == null) {
+            return;
+        }
 
         // 设置要返回的数据
         setInputData(newEmp);
